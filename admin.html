@@ -37,12 +37,12 @@ const HBL={hero:"الخبر الرئيسي",events:"المناسبات القا�
 const IC=["home","news","cal","users","trophy","grid","search","bookmark","send"];
 const NAV0=[["home","الرئيسية","#home"],["news","أخبار صراوة","#s-0"],["cal","مناسبات صراوة","#s-2"],["users","شخصيات صراوة","#s-8"],["trophy","مسابقات","#s-32"],["grid","كل الأقسام","#sections"],["search","بحث","#search"],["bookmark","المحفوظات","#saved"],["send","أرسل مشاركتك","#submit"]];
 const POS=[["top","أعلى الصفحة"],["mid","بين الأقسام"],["article","داخل المقال"],["bottom","أسفل الرئيسية"]];
-let S=null,ED=null,TAB="set",API=localStorage.getItem("adm_url")||"",KEY=sessionStorage.getItem("adm_k")||"";
+let S=null,ED=null,UE=null,TAB="set",API=localStorage.getItem("adm_url")||"",TK=sessionStorage.getItem("adm_t")||"";
 const msg=t=>{const d=document.createElement("div");d.className="msg";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2500)};
-async function api(action,d={}){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({key:KEY,action,...d})});const j=await r.json();if(j.error)throw new Error(j.error==="unauthorized"?"كلمة السر غير صحيحة":j.error);return j}
+async function api(action,d={}){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({token:TK,action,...d})});const j=await r.json();if(j.error==="expired"){sessionStorage.removeItem("adm_t");TK="";login("انتهت الجلسة، سجّل الدخول من جديد");throw new Error("انتهت الجلسة")}if(j.error)throw new Error(j.error);return j}
 const gp=(o,p)=>p.split(".").reduce((x,k)=>x?.[k],o);
 function sp(o,p,v){const k=p.split(".");let t=o;k.slice(0,-1).forEach(x=>t=t[x]??={});t[k[k.length-1]]=v}
-function F(l,p,t,o={}){const v=gp(o.a?ED:S.cfg,p),at=`data-p="${p}"${o.a?' data-sc="a"':""}${o.y?' data-y="1"':""}${o.ln?' data-l="1"':""}`;
+function F(l,p,t,o={}){const v=gp(o.a?ED:o.u?UE:S.cfg,p),at=`data-p="${p}"${o.a?' data-sc="a"':o.u?' data-sc="u"':""}${o.y?' data-y="1"':""}${o.ln?' data-l="1"':""}`;
  if(t==="chk")return`<label class="row"><span class="s"><input type="checkbox" ${at} ${(o.y?v==="نعم":(v===undefined||+v!==0&&v!==""))?"checked":""}></span><span>${l}</span></label>`;
  if(t==="area")return`<label>${l}</label><textarea rows="${o.r||4}" ${at}>${esc(o.ln?(v||[]).join("\n"):v)}</textarea>`;
  if(t==="sel")return`<label>${l}</label><select ${at}>${o.opts.map(([k,x])=>`<option value="${esc(k)}"${String(v)===String(k)?" selected":""}>${esc(x)}</option>`).join("")}</select>`;
@@ -50,7 +50,7 @@ function F(l,p,t,o={}){const v=gp(o.a?ED:S.cfg,p),at=`data-p="${p}"${o.a?' data-
 document.addEventListener("input",e=>{const t=e.target,p=t.dataset.p;if(!p)return;let v=t.value;
  if(t.type==="checkbox")v=t.dataset.y?(t.checked?"نعم":""):(t.checked?1:0);
  if(t.dataset.l)v=v.split("\n").map(x=>x.trim()).filter(Boolean);
- sp(t.dataset.sc==="a"?ED:S.cfg,p,v)});
+ sp(t.dataset.sc==="a"?ED:t.dataset.sc==="u"?UE:S.cfg,p,v)});
 const mv=(p,i,d)=>{const a=gp(S.cfg,p),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];render()};
 const rm=(p,i)=>{gp(S.cfg,p).splice(i,1);render()};
 const ad=(p,o)=>{gp(S.cfg,p).push(o);render()};
@@ -67,24 +67,34 @@ ads:()=>`<p class="hint">المساحة لا تظهر في الموقع إلا �
 txt:()=>{const c=S.cfg;return`<div class="card"><b>هيئة التحرير</b>${c.editorial.map((x,i)=>`<div class="row">${F("المنصب","editorial."+i+".0")}${F("الاسم","editorial."+i+".1")}<span class="s"><button class="r" onclick="rm('editorial',${i})">حذف</button></span></div>`).join("")}<button class="o" onclick="ad('editorial',['منصب','الاسم'])">+ إضافة</button></div>
 <div class="card"><b>استطلاع الرأي</b>${F("السؤال","poll.q")}${F("الخيارات (كل خيار في سطر)","poll.o","area",{ln:1})}</div>
 ${[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].map(([k,x])=>`<div class="card"><b>صفحة: ${x}</b>${F("العنوان","pages."+k+".0")}${F("النص","pages."+k+".1","area",{r:5})}</div>`).join("")}`+SV},
-arts:()=>ED?artForm():`<p><button class="g" onclick="ED={status:'مسودة',date:new Date().toISOString().slice(0,10)};render()">+ مقال جديد</button></p>`+S.arts.map((a,i)=>[a,i]).sort((x,y)=>String(y[0].date).localeCompare(String(x[0].date))).map(([a,i])=>`<div class="card"><b>${esc(a.title)}</b><br><small>${esc(a.section)} • ${esc(String(a.date).slice(0,10))} • ${esc(a.status)}</small><p class="row"><button class="o s" onclick="ED={...S.arts[${i}]};render()">تعديل</button><button class="r s" onclick="delA(${i})">حذف</button></p></div>`).join(""),
+arts:()=>ED?artForm():`<p><button class="g" onclick="ED={status:'مسودة',date:new Date().toISOString().slice(0,10)};render()">+ مقال جديد</button></p>`+S.arts.map((a,i)=>[a,i]).sort((x,y)=>String(y[0].date).localeCompare(String(x[0].date))).map(([a,i])=>`<div class="card"><b>${esc(a.title)}</b><br><small>${esc(a.section)} • ${esc(String(a.date).slice(0,10))} • ${esc(a.status)}</small><p class="row"><button class="o s" onclick="ED={...S.arts[${i}]};render()">تعديل</button>${S.role==="editor"?"":`<button class="r s" onclick="delA(${i})">حذف</button>`}</p></div>`).join(""),
+users:()=>usersV(),
 inbox:()=>{const L=(t,sh,A,ok)=>`<h3>${t}</h3>`+(A.length?[...A].reverse().map(({row,r})=>`<div class="card"><small>${esc(String(r[1]).slice(0,10))} • ${esc(r[2])} • الحالة: ${esc(r[6])} • مرجع: ${esc(r[0])}</small><br><b>${esc(r[3])}</b> ${esc(r[4])}<p>${esc(r[5])}</p><p class="row"><button class="g s" onclick="st('${sh}',${row},'${ok}')">${ok}</button><button class="o s" onclick="st('${sh}',${row},'مرفوض')">رفض</button><button class="r s" onclick="dr('${sh}',${row})">حذف</button></p></div>`).join(""):"<p>لا يوجد.</p>");return L("التعليقات","التعليقات",S.coms,"معتمد")+L("المشاركات","المشاركات",S.subs,"مقبول")}};
 const af=(l,p,t,o={})=>F(l,p,t,{...o,a:1});
-const artForm=()=>`<div class="card"><datalist id="sl">${SEC.map(s=>`<option>${s}</option>`).join("")}</datalist>${af("العنوان","title")}${af("عنوان فرعي","subtitle")}<label>القسم</label><input list="sl" data-p="section" data-sc="a" value="${esc(ED.section)}">${af("النص (كل فقرة في سطر)","body","area",{r:9})}${af("رابط الصورة","img")}${af("رابط فيديو يوتيوب","video")}${af("روابط صور إضافية (مفصولة بمسافة)","gallery")}<div class="row">${af("التاريخ","date","date")}${af("الحالة","status","sel",{opts:[["مسودة","مسودة"],["منشور","منشور"]]})}</div><div class="row">${af("الكاتب","author")}${af("المحرر","editor")}</div>${af("الوسوم (بفاصلة)","tags")}<div class="row">${af("تاريخ المناسبة","eventdate","date")}${af("المكان","place")}</div>${af("خبر عاجل","breaking","chk",{y:1})}${af("اختيار هيئة التحرير","pick","chk",{y:1})}<p class="row"><button class="g s" onclick="saveA()">حفظ</button><button class="o s" onclick="ED=null;render()">رجوع</button></p></div>`;
+const artForm=()=>`<div class="card"><datalist id="sl">${SEC.map(s=>`<option>${s}</option>`).join("")}</datalist>${af("العنوان","title")}${af("عنوان فرعي","subtitle")}<label>القسم</label><input list="sl" data-p="section" data-sc="a" value="${esc(ED.section)}">${af("النص (كل فقرة في سطر)","body","area",{r:9})}${af("رابط الصورة","img")}${af("رابط فيديو يوتيوب","video")}${af("روابط صور إضافية (مفصولة بمسافة)","gallery")}<div class="row">${af("التاريخ","date","date")}${S.role==="editor"?"<p class='hint'>يُحفظ كمسودة ويعتمده رئيس التحرير.</p>":af("الحالة","status","sel",{opts:[["مسودة","مسودة"],["منشور","منشور"]]})}</div><div class="row">${af("الكاتب","author")}${af("المحرر","editor")}</div>${af("الوسوم (بفاصلة)","tags")}<div class="row">${af("تاريخ المناسبة","eventdate","date")}${af("المكان","place")}</div>${af("خبر عاجل","breaking","chk",{y:1})}${af("اختيار هيئة التحرير","pick","chk",{y:1})}<p class="row"><button class="g s" onclick="saveA()">حفظ</button><button class="o s" onclick="ED=null;render()">رجوع</button></p></div>`;
 const wrap=async(f,ok)=>{try{await f();if(ok)msg(ok)}catch(e){msg(e.message)}};
 const saveCfg=()=>wrap(()=>api("saveConfig",{cfg:S.cfg}),"تم الحفظ");
 const saveA=()=>wrap(async()=>{await api("saveArticle",{a:ED});ED=null;await load()},"تم حفظ المقال");
 const delA=i=>confirm("حذف المقال؟")&&wrap(async()=>{await api("delArticle",{id:S.arts[i].id});await load()},"تم الحذف");
 const st=(sheet,row,status)=>wrap(async()=>{await api("setStatus",{sheet,row,status});await load()},"تم");
 const dr=(sheet,row)=>confirm("حذف نهائي؟")&&wrap(async()=>{await api("delRow",{sheet,row});await load()},"تم الحذف");
-function render(){const T=[["set","الإعدادات"],["home","الرئيسية والقوائم"],["ads","الإعلانات"],["txt","النصوص"],["arts","المقالات"],["inbox","الوارد"]];
- $("#app").innerHTML=`<nav>${T.map(([k,x])=>`<button class="${TAB===k?"on":"o"}" onclick="TAB='${k}';ED=null;render()">${x}</button>`).join("")}</nav><main>${V[TAB]()}</main>`}
-function login(m){$("#app").innerHTML=`<main><div class="card"><h2>تسجيل الدخول</h2>${m?`<p style="color:var(--red)">${esc(m)}</p>`:""}<label>رابط Web App</label><input id="lu" dir="ltr" value="${esc(API)}"><label>كلمة السر</label><input id="lk" type="password"><p></p><button class="g" onclick="go()">دخول</button></div></main>`}
-function go(){API=$("#lu").value.trim();KEY=$("#lk").value;localStorage.setItem("adm_url",API);sessionStorage.setItem("adm_k",KEY);load()}
-async function load(){if(!API||!KEY)return login();
- try{S=await api("getAll");const c=S.cfg;c.home=c.home||Object.keys(HBL).map(id=>({id,on:1}));c.nav=c.nav||NAV0.map(([i,t,h])=>({i,t,h,on:1}));c.ads=c.ads||[];c.colors={pri:"#9a6208",acc:"#e8ad1c",grn:"#3f7d2c",bg:"#fcf8e6",...(c.colors||{})};c.editorial=c.editorial||[["رئيس التحرير","الاسم"]];c.poll=c.poll||{q:"",o:[]};
-  c.pages=c.pages||{};[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].forEach(([k,x])=>c.pages[k]=c.pages[k]||[x,""]);render()}
- catch(e){login(e.message)}}
+const RL={owner:"مالك",chief:"رئيس تحرير",editor:"محرر",moderator:"مشرف",ads:"مسؤول إعلانات"};
+const TB={owner:["set","home","ads","txt","arts","inbox","users"],chief:["arts","inbox"],editor:["arts"],moderator:["inbox"],ads:["ads"]};
+function usersV(){if(UE)return`<div class="card">${F("اسم المستخدم (إنجليزي)","u","text",{u:1})}${F("الاسم الظاهر","name","text",{u:1})}${F("الدور","role","sel",{u:1,opts:Object.entries(RL)})}${F(UE.isNew?"كلمة السر (8 أحرف على الأقل)":"كلمة سر جديدة (اتركها فارغة للإبقاء)","pass","password",{u:1})}${F("فعّال","active","chk",{u:1,y:1})}<p class="row"><button class="g s" onclick="saveU()">حفظ</button><button class="o s" onclick="UE=null;render()">رجوع</button></p></div>`;
+ return`<p><button class="g" onclick="UE={isNew:1,role:'editor',active:'نعم'};render()">+ مستخدم جديد</button></p><p class="hint">المالك الأساسي: admin، وكلمة سره هي ADMIN_KEY.</p>`+(S.users||[]).map((x,i)=>`<div class="card"><b>${esc(x.name||x.u)}</b> <small>(${esc(x.u)})</small><br><small>${RL[x.role]||esc(x.role)} • ${x.active==="لا"?"موقوف":"فعّال"}</small><p class="row"><button class="o s" onclick="UE={u:S.users[${i}].u,name:S.users[${i}].name,role:S.users[${i}].role,active:S.users[${i}].active==='لا'?'':'نعم'};render()">تعديل</button><button class="r s" onclick="delU(${i})">حذف</button></p></div>`).join("")}
+const saveU=()=>wrap(async()=>{await api("saveUser",{u:UE.u,name:UE.name,role:UE.role,pass:UE.pass,active:UE.active==="نعم"?"نعم":"لا"});UE=null;await load()},"تم حفظ المستخدم");
+const delU=i=>confirm("حذف المستخدم؟")&&wrap(async()=>{await api("delUser",{u:S.users[i].u});await load()},"تم الحذف");
+function render(){const N={set:"الإعدادات",home:"الرئيسية والقوائم",ads:"الإعلانات",txt:"النصوص",arts:"المقالات",inbox:"الوارد",users:"المستخدمون"},T=TB[S.role]||[];if(!T.includes(TAB))TAB=T[0];
+ $("#app").innerHTML=`<nav>${T.map(k=>`<button class="${TAB===k?"on":"o"}" onclick="TAB='${k}';ED=null;UE=null;render()">${N[k]}</button>`).join("")}<button class="r" onclick="logout()">خروج</button></nav><main><p class="hint">${esc(S.name)} (${RL[S.role]||""})</p>${V[TAB]()}</main>`}
+function login(m){$("#app").innerHTML=`<main><div class="card"><h2>تسجيل الدخول</h2>${m?`<p style="color:var(--red)">${esc(m)}</p>`:""}<label>رابط Web App</label><input id="lu" dir="ltr" value="${esc(API)}"><label>اسم المستخدم (المالك: admin)</label><input id="lm" dir="ltr" autocapitalize="off" value="${esc(localStorage.getItem("adm_u")||"")}"><label>كلمة السر</label><input id="lk" type="password"><p></p><button class="g" onclick="go()">دخول</button></div></main>`}
+async function go(){API=$("#lu").value.trim();const u=$("#lm").value.trim();localStorage.setItem("adm_url",API);localStorage.setItem("adm_u",u);
+ try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({action:"login",user:u,pass:$("#lk").value})});const j=await r.json();if(j.error)throw new Error(j.error);TK=j.token;sessionStorage.setItem("adm_t",TK);await load()}
+ catch(e){login(/JSON|fetch/i.test(e.message)?"تعذر الاتصال، تأكد من رابط Web App":e.message)}}
+function logout(){sessionStorage.removeItem("adm_t");TK="";S=null;login()}
+async function load(){if(!API||!TK)return login();
+ try{S=await api("getAll");const c=S.cfg;if(c){c.home=c.home||Object.keys(HBL).map(id=>({id,on:1}));c.nav=c.nav||NAV0.map(([i,t,h])=>({i,t,h,on:1}));c.ads=c.ads||[];c.colors={pri:"#9a6208",acc:"#e8ad1c",grn:"#3f7d2c",bg:"#fcf8e6",...(c.colors||{})};c.editorial=c.editorial||[["رئيس التحرير","الاسم"]];c.poll=c.poll||{q:"",o:[]};
+  c.pages=c.pages||{};[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].forEach(([k,x])=>c.pages[k]=c.pages[k]||[x,""])}render()}
+ catch(e){if(TK)login(e.message)}}
 load();
 </script>
 </body>
