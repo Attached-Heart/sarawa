@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>لوحة تحكم مناسبات صراوة</title>
+<style>
+:root{--bg:#fcf8e6;--card:#fffdf4;--ink:#2a2410;--pri:#9a6208;--acc:#e8ad1c;--grn:#3f7d2c;--line:#ecdfae;--red:#b3261e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Cairo,Tahoma,sans-serif}
+header{background:var(--grn);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+header a{color:#fff;font-size:14px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:48px;z-index:4}
+nav button{white-space:nowrap}
+main{max-width:860px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+label{display:block;font-weight:600;margin:8px 0 2px;font-size:14px}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff;color:var(--ink)}
+input[type=checkbox]{width:20px;height:20px}input[type=color]{height:42px;padding:2px}
+button{font:inherit;border:0;border-radius:8px;padding:8px 14px;background:var(--acc);color:#2a1a05;font-weight:600;cursor:pointer}
+button.g{background:var(--grn);color:#fff}button.r{background:var(--red);color:#fff}button.o{background:#fff;border:1px solid var(--line);color:var(--ink)}
+nav button.on{background:var(--pri);color:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1;min-width:120px}.row>.s{flex:0 0 auto;min-width:0}
+.row label{margin:0}
+.msg{position:fixed;bottom:16px;right:16px;left:16px;background:#222;color:#fff;padding:10px;border-radius:8px;text-align:center;z-index:9}
+.hint{color:#7a6f4c;font-size:13px}
+</style>
+</head>
+<body>
+<header><b>لوحة التحكم</b><a href="index.html" target="_blank">فتح الموقع</a></header>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const SEC=["أخبار صراوة","أخبار عاجلة","مناسبات صراوة","أفراح وزفاف","خطوبة","مواليد","تهنئة وتكريم","عزاء ووفاة","شخصيات صراوة","رموز وشخصيات عامة","مال وأعمال","اقتصاد","سياسة","بنوك","بورصة","سياحة","مؤتمرات وندوات","فن وثقافة","رياضة","صحة","تعليم","تكنولوجيا","مجتمع","مبادرات أهلية","أعمال خيرية","المغتربون","خدمات القرية","مقالات الرأي","تحقيقات وتقارير","حوارات صحفية","أخبار المؤسسات","إعلانات مبوبة","مسابقات","استطلاعات الرأي","فيديو","صور","إنفوجراف","أرشيف صراوة","هيئة التحرير","إعداد المجلة"];
+const HBL={hero:"الخبر الرئيسي",events:"المناسبات القادمة",top:"الأكثر قراءة",picks:"اختيارات هيئة التحرير",main:"أقسام صراوة الرئيسية",more:"أقسام أخرى",poll:"استطلاع الرأي",news:"النشرة البريدية",follow:"تابعنا"};
+const IC=["home","news","cal","users","trophy","grid","search","bookmark","send"];
+const NAV0=[["home","الرئيسية","#home"],["news","أخبار صراوة","#s-0"],["cal","مناسبات صراوة","#s-2"],["users","شخصيات صراوة","#s-8"],["trophy","مسابقات","#s-32"],["grid","كل الأقسام","#sections"],["search","بحث","#search"],["bookmark","المحفوظات","#saved"],["send","أرسل مشاركتك","#submit"]];
+const POS=[["top","أعلى الصفحة"],["mid","بين الأقسام"],["article","داخل المقال"],["bottom","أسفل الرئيسية"]];
+let S=null,ED=null,TAB="set",API=localStorage.getItem("adm_url")||"",KEY=sessionStorage.getItem("adm_k")||"";
+const msg=t=>{const d=document.createElement("div");d.className="msg";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2500)};
+async function api(action,d={}){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({key:KEY,action,...d})});const j=await r.json();if(j.error)throw new Error(j.error==="unauthorized"?"كلمة السر غير صحيحة":j.error);return j}
+const gp=(o,p)=>p.split(".").reduce((x,k)=>x?.[k],o);
+function sp(o,p,v){const k=p.split(".");let t=o;k.slice(0,-1).forEach(x=>t=t[x]??={});t[k[k.length-1]]=v}
+function F(l,p,t,o={}){const v=gp(o.a?ED:S.cfg,p),at=`data-p="${p}"${o.a?' data-sc="a"':""}${o.y?' data-y="1"':""}${o.ln?' data-l="1"':""}`;
+ if(t==="chk")return`<label class="row"><span class="s"><input type="checkbox" ${at} ${(o.y?v==="نعم":(v===undefined||+v!==0&&v!==""))?"checked":""}></span><span>${l}</span></label>`;
+ if(t==="area")return`<label>${l}</label><textarea rows="${o.r||4}" ${at}>${esc(o.ln?(v||[]).join("\n"):v)}</textarea>`;
+ if(t==="sel")return`<label>${l}</label><select ${at}>${o.opts.map(([k,x])=>`<option value="${esc(k)}"${String(v)===String(k)?" selected":""}>${esc(x)}</option>`).join("")}</select>`;
+ return`<label>${l}</label><input type="${t||"text"}" ${at} value="${esc(t==="date"?String(v||"").slice(0,10):v)}">`}
+document.addEventListener("input",e=>{const t=e.target,p=t.dataset.p;if(!p)return;let v=t.value;
+ if(t.type==="checkbox")v=t.dataset.y?(t.checked?"نعم":""):(t.checked?1:0);
+ if(t.dataset.l)v=v.split("\n").map(x=>x.trim()).filter(Boolean);
+ sp(t.dataset.sc==="a"?ED:S.cfg,p,v)});
+const mv=(p,i,d)=>{const a=gp(S.cfg,p),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];render()};
+const rm=(p,i)=>{gp(S.cfg,p).splice(i,1);render()};
+const ad=(p,o)=>{gp(S.cfg,p).push(o);render()};
+const UD=p=>(i)=>`<span class="s"><button class="o" onclick="mv('${p}',${i},-1)">↑</button> <button class="o" onclick="mv('${p}',${i},1)">↓</button></span>`;
+const SV=`<p><button class="g" onclick="saveCfg()">حفظ التغييرات</button></p><p class="hint">تظهر التغييرات للزوار عند فتح الموقع أو تحديثه.</p>`;
+const V={
+set:()=>`<div class="card"><b>بيانات المجلة</b>${F("اسم المجلة","name")}${F("رابط صورة البانر (فارغ = البانر الحالي)","banner")}</div>
+<div class="card"><b>الألوان</b><div class="row">${[["pri","الرئيسي"],["acc","التمييز"],["grn","الأخضر"],["bg","الخلفية"]].map(([k,x])=>F(x,"colors."+k,"color")).join("")}</div></div>
+<div class="card"><b>التواصل الاجتماعي</b>${F("رابط فيسبوك","fb")}${F("رقم واتساب بصيغة دولية","wa")}${F("رابط يوتيوب","yt")}${F("رابط تيليجرام","tg")}</div>
+<div class="card"><b>العناصر</b>${F("شريط الأخبار العاجلة","ticker","chk")}${F("التعليقات","comments","chk")}${F("النشرة البريدية","newsletter","chk")}</div>`+SV,
+home:()=>{const c=S.cfg,u=UD("home"),n=UD("nav");return`<div class="card"><b>ترتيب الصفحة الرئيسية</b>${c.home.map((x,i)=>`<div class="row"><span>${HBL[x.id]||x.id}</span><span class="s">${F("","home."+i+".on","chk")}</span>${u(i)}</div>`).join("")}</div>
+<div class="card"><b>قائمة التنقل</b>${c.nav.map((x,i)=>`<div class="card"><div class="row">${F("الأيقونة","nav."+i+".i","sel",{opts:IC.map(k=>[k,k])})}${F("الاسم","nav."+i+".t")}${F("الرابط","nav."+i+".h")}</div><div class="row">${F("ظاهر","nav."+i+".on","chk")}${n(i)}<span class="s"><button class="r" onclick="rm('nav',${i})">حذف</button></span></div></div>`).join("")}<button class="o" onclick="ad('nav',{i:'home',t:'جديد',h:'#home',on:1})">+ إضافة رابط</button></div>`+SV},
+ads:()=>`<p class="hint">المساحة لا تظهر في الموقع إلا بعد إضافة إعلان فعّال داخل فترته، وتختفي عند عدم وجود إعلان.</p>${S.cfg.ads.map((a,i)=>`<div class="card"><div class="row">${F("المكان","ads."+i+".pos","sel",{opts:POS})}${F("النوع","ads."+i+".kind","sel",{opts:[["image","صورة"],["video","فيديو"],["link","رابط نصي"]]})}</div>${F("رابط الصورة أو الفيديو (يوتيوب أو mp4)","ads."+i+".media")}${F("رابط الانتقال للموقع","ads."+i+".link")}${F("العنوان أو النص","ads."+i+".title")}<div class="row">${F("يبدأ","ads."+i+".start","date")}${F("ينتهي","ads."+i+".end","date")}</div><div class="row">${F("فعّال","ads."+i+".active","chk")}<span class="s"><button class="r" onclick="rm('ads',${i})">حذف الإعلان</button></span></div></div>`).join("")}<button class="o" onclick="ad('ads',{id:'ad'+Date.now(),pos:'top',kind:'image',media:'',link:'',title:'',start:'',end:'',active:1})">+ إعلان جديد</button>`+SV,
+txt:()=>{const c=S.cfg;return`<div class="card"><b>هيئة التحرير</b>${c.editorial.map((x,i)=>`<div class="row">${F("المنصب","editorial."+i+".0")}${F("الاسم","editorial."+i+".1")}<span class="s"><button class="r" onclick="rm('editorial',${i})">حذف</button></span></div>`).join("")}<button class="o" onclick="ad('editorial',['منصب','الاسم'])">+ إضافة</button></div>
+<div class="card"><b>استطلاع الرأي</b>${F("السؤال","poll.q")}${F("الخيارات (كل خيار في سطر)","poll.o","area",{ln:1})}</div>
+${[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].map(([k,x])=>`<div class="card"><b>صفحة: ${x}</b>${F("العنوان","pages."+k+".0")}${F("النص","pages."+k+".1","area",{r:5})}</div>`).join("")}`+SV},
+arts:()=>ED?artForm():`<p><button class="g" onclick="ED={status:'مسودة',date:new Date().toISOString().slice(0,10)};render()">+ مقال جديد</button></p>`+S.arts.map((a,i)=>[a,i]).sort((x,y)=>String(y[0].date).localeCompare(String(x[0].date))).map(([a,i])=>`<div class="card"><b>${esc(a.title)}</b><br><small>${esc(a.section)} • ${esc(String(a.date).slice(0,10))} • ${esc(a.status)}</small><p class="row"><button class="o s" onclick="ED={...S.arts[${i}]};render()">تعديل</button><button class="r s" onclick="delA(${i})">حذف</button></p></div>`).join(""),
+inbox:()=>{const L=(t,sh,A,ok)=>`<h3>${t}</h3>`+(A.length?[...A].reverse().map(({row,r})=>`<div class="card"><small>${esc(String(r[1]).slice(0,10))} • ${esc(r[2])} • الحالة: ${esc(r[6])} • مرجع: ${esc(r[0])}</small><br><b>${esc(r[3])}</b> ${esc(r[4])}<p>${esc(r[5])}</p><p class="row"><button class="g s" onclick="st('${sh}',${row},'${ok}')">${ok}</button><button class="o s" onclick="st('${sh}',${row},'مرفوض')">رفض</button><button class="r s" onclick="dr('${sh}',${row})">حذف</button></p></div>`).join(""):"<p>لا يوجد.</p>");return L("التعليقات","التعليقات",S.coms,"معتمد")+L("المشاركات","المشاركات",S.subs,"مقبول")}};
+const af=(l,p,t,o={})=>F(l,p,t,{...o,a:1});
+const artForm=()=>`<div class="card"><datalist id="sl">${SEC.map(s=>`<option>${s}</option>`).join("")}</datalist>${af("العنوان","title")}${af("عنوان فرعي","subtitle")}<label>القسم</label><input list="sl" data-p="section" data-sc="a" value="${esc(ED.section)}">${af("النص (كل فقرة في سطر)","body","area",{r:9})}${af("رابط الصورة","img")}${af("رابط فيديو يوتيوب","video")}${af("روابط صور إضافية (مفصولة بمسافة)","gallery")}<div class="row">${af("التاريخ","date","date")}${af("الحالة","status","sel",{opts:[["مسودة","مسودة"],["منشور","منشور"]]})}</div><div class="row">${af("الكاتب","author")}${af("المحرر","editor")}</div>${af("الوسوم (بفاصلة)","tags")}<div class="row">${af("تاريخ المناسبة","eventdate","date")}${af("المكان","place")}</div>${af("خبر عاجل","breaking","chk",{y:1})}${af("اختيار هيئة التحرير","pick","chk",{y:1})}<p class="row"><button class="g s" onclick="saveA()">حفظ</button><button class="o s" onclick="ED=null;render()">رجوع</button></p></div>`;
+const wrap=async(f,ok)=>{try{await f();if(ok)msg(ok)}catch(e){msg(e.message)}};
+const saveCfg=()=>wrap(()=>api("saveConfig",{cfg:S.cfg}),"تم الحفظ");
+const saveA=()=>wrap(async()=>{await api("saveArticle",{a:ED});ED=null;await load()},"تم حفظ المقال");
+const delA=i=>confirm("حذف المقال؟")&&wrap(async()=>{await api("delArticle",{id:S.arts[i].id});await load()},"تم الحذف");
+const st=(sheet,row,status)=>wrap(async()=>{await api("setStatus",{sheet,row,status});await load()},"تم");
+const dr=(sheet,row)=>confirm("حذف نهائي؟")&&wrap(async()=>{await api("delRow",{sheet,row});await load()},"تم الحذف");
+function render(){const T=[["set","الإعدادات"],["home","الرئيسية والقوائم"],["ads","الإعلانات"],["txt","النصوص"],["arts","المقالات"],["inbox","الوارد"]];
+ $("#app").innerHTML=`<nav>${T.map(([k,x])=>`<button class="${TAB===k?"on":"o"}" onclick="TAB='${k}';ED=null;render()">${x}</button>`).join("")}</nav><main>${V[TAB]()}</main>`}
+function login(m){$("#app").innerHTML=`<main><div class="card"><h2>تسجيل الدخول</h2>${m?`<p style="color:var(--red)">${esc(m)}</p>`:""}<label>رابط Web App</label><input id="lu" dir="ltr" value="${esc(API)}"><label>كلمة السر</label><input id="lk" type="password"><p></p><button class="g" onclick="go()">دخول</button></div></main>`}
+function go(){API=$("#lu").value.trim();KEY=$("#lk").value;localStorage.setItem("adm_url",API);sessionStorage.setItem("adm_k",KEY);load()}
+async function load(){if(!API||!KEY)return login();
+ try{S=await api("getAll");const c=S.cfg;c.home=c.home||Object.keys(HBL).map(id=>({id,on:1}));c.nav=c.nav||NAV0.map(([i,t,h])=>({i,t,h,on:1}));c.ads=c.ads||[];c.colors={pri:"#9a6208",acc:"#e8ad1c",grn:"#3f7d2c",bg:"#fcf8e6",...(c.colors||{})};c.editorial=c.editorial||[["رئيس التحرير","الاسم"]];c.poll=c.poll||{q:"",o:[]};
+  c.pages=c.pages||{};[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].forEach(([k,x])=>c.pages[k]=c.pages[k]||[x,""]);render()}
+ catch(e){login(e.message)}}
+load();
+</script>
+</body>
+</html>
