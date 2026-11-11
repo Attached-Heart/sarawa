@@ -37,7 +37,7 @@ const HBL={hero:"الخبر الرئيسي",events:"المناسبات القا�
 const IC=["home","news","cal","users","trophy","grid","search","bookmark","send"];
 const NAV0=[["home","الرئيسية","#home"],["news","أخبار صراوة","#s-0"],["cal","مناسبات صراوة","#s-2"],["users","شخصيات صراوة","#s-8"],["trophy","مسابقات","#s-32"],["grid","كل الأقسام","#sections"],["search","بحث","#search"],["bookmark","المحفوظات","#saved"],["send","أرسل مشاركتك","#submit"]];
 const POS=[["top","أعلى الصفحة"],["mid","بين الأقسام"],["article","داخل المقال"],["bottom","أسفل الرئيسية"]];
-let S=null,ED=null,UE=null,TAB="set",API=localStorage.getItem("adm_url")||"",TK=sessionStorage.getItem("adm_t")||"";
+let S=null,ED=null,UE=null,TAB="set",API="https://script.google.com/macros/s/AKfycbyKDELYGajGcSeXCiqWdfdcwte6qHkScNmER3oaQKfvsPGZpNYGk28vCxPIXk37eJusCQ/exec",TK=sessionStorage.getItem("adm_t")||"";
 const msg=t=>{const d=document.createElement("div");d.className="msg";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2500)};
 async function api(action,d={}){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({token:TK,action,...d})});const j=await r.json();if(j.error==="expired"){sessionStorage.removeItem("adm_t");TK="";login("انتهت الجلسة، سجّل الدخول من جديد");throw new Error("انتهت الجلسة")}if(j.error)throw new Error(j.error);return j}
 const gp=(o,p)=>p.split(".").reduce((x,k)=>x?.[k],o);
@@ -86,8 +86,8 @@ const saveU=()=>wrap(async()=>{await api("saveUser",{u:UE.u,name:UE.name,role:UE
 const delU=i=>confirm("حذف المستخدم؟")&&wrap(async()=>{await api("delUser",{u:S.users[i].u});await load()},"تم الحذف");
 function render(){const N={set:"الإعدادات",home:"الرئيسية والقوائم",ads:"الإعلانات",txt:"النصوص",arts:"المقالات",inbox:"الوارد",users:"المستخدمون"},T=TB[S.role]||[];if(!T.includes(TAB))TAB=T[0];
  $("#app").innerHTML=`<nav>${T.map(k=>`<button class="${TAB===k?"on":"o"}" onclick="TAB='${k}';ED=null;UE=null;render()">${N[k]}</button>`).join("")}<button class="r" onclick="logout()">خروج</button></nav><main><p class="hint">${esc(S.name)} (${RL[S.role]||""})</p>${V[TAB]()}</main>`}
-function login(m){$("#app").innerHTML=`<main><div class="card"><h2>تسجيل الدخول</h2>${m?`<p style="color:var(--red)">${esc(m)}</p>`:""}<label>رابط Web App</label><input id="lu" dir="ltr" value="${esc(API)}"><label>اسم المستخدم (المالك: admin)</label><input id="lm" dir="ltr" autocapitalize="off" value="${esc(localStorage.getItem("adm_u")||"")}"><label>كلمة السر</label><input id="lk" type="password"><p></p><button class="g" onclick="go()">دخول</button></div></main>`}
-async function go(){API=$("#lu").value.trim();const u=$("#lm").value.trim();localStorage.setItem("adm_url",API);localStorage.setItem("adm_u",u);
+function login(m){$("#app").innerHTML=`<main><div class="card"><h2>تسجيل الدخول</h2>${m?`<p style="color:var(--red)">${esc(m)}</p>`:""}<label>اسم المستخدم (المالك: admin)</label><input id="lm" dir="ltr" autocapitalize="off" value="${esc(localStorage.getItem("adm_u")||"")}"><label>كلمة السر</label><input id="lk" type="password"><p></p><button class="g" onclick="go()">دخول</button></div></main>`}
+async function go(){const u=$("#lm").value.trim();localStorage.setItem("adm_u",u);
  try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({action:"login",user:u,pass:$("#lk").value})});const j=await r.json();if(j.error)throw new Error(j.error);TK=j.token;sessionStorage.setItem("adm_t",TK);await load()}
  catch(e){login(/JSON|fetch/i.test(e.message)?"تعذر الاتصال، تأكد من رابط Web App":e.message)}}
 function logout(){sessionStorage.removeItem("adm_t");TK="";S=null;login()}
