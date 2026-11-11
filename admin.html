@@ -5,96 +5,173 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>لوحة تحكم مناسبات صراوة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Noto+Naskh+Arabic:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fcf8e6;--card:#fffdf4;--ink:#2a2410;--pri:#9a6208;--acc:#e8ad1c;--grn:#3f7d2c;--line:#ecdfae;--red:#b3261e}
+:root{--bg:#f6f3e8;--card:#fff;--ink:#2a2410;--pri:#9a6208;--acc:#e8ad1c;--grn:#3f7d2c;--line:#e6dcb8;--red:#b3261e;--mut:#7a6f4c}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Cairo,Tahoma,sans-serif}
-header{background:var(--grn);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
-header a{color:#fff;font-size:14px}
-nav{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:48px;z-index:4}
-nav button{white-space:nowrap}
-main{max-width:860px;margin:0 auto;padding:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
-label{display:block;font-weight:600;margin:8px 0 2px;font-size:14px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 Cairo,Tahoma,sans-serif}
+h1,h2,h3{font-family:"Noto Naskh Arabic",Cairo,serif;margin:0}
+header{background:linear-gradient(90deg,var(--grn),#2f5c20);color:#fff;padding:10px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px #0003;min-height:52px}
+header a{color:#fff}header .lk{background:#fff2;border:0;color:#fff;border-radius:8px;padding:4px 12px;cursor:pointer;font:inherit}
+.shell{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 52px)}
+aside{background:#fff;border-left:1px solid var(--line);padding:12px;position:sticky;top:52px;height:calc(100vh - 52px);overflow:auto}
+aside h4{margin:14px 6px 4px;color:var(--mut);font-size:12px}
+aside button{display:flex;justify-content:space-between;width:100%;text-align:right;background:none;border:0;padding:9px 12px;border-radius:8px;color:var(--ink);font:inherit;cursor:pointer}
+aside button:hover{background:#f5efd9}aside button.on{background:var(--pri);color:#fff}
+aside i{background:var(--red);color:#fff;border-radius:99px;padding:0 8px;font-style:normal;font-size:12px}
+main{padding:18px;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 1px 3px #0001}
+label{display:block;font-weight:600;margin:10px 0 3px;font-size:13px}
 input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus,.rte:focus{outline:2px solid var(--acc);border-color:var(--acc)}
 input[type=checkbox]{width:20px;height:20px}input[type=color]{height:42px;padding:2px}
 button{font:inherit;border:0;border-radius:8px;padding:8px 14px;background:var(--acc);color:#2a1a05;font-weight:600;cursor:pointer}
 button.g{background:var(--grn);color:#fff}button.r{background:var(--red);color:#fff}button.o{background:#fff;border:1px solid var(--line);color:var(--ink)}
-nav button.on{background:var(--pri);color:#fff}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1;min-width:120px}.row>.s{flex:0 0 auto;min-width:0}
-.row label{margin:0}
-.msg{position:fixed;bottom:16px;right:16px;left:16px;background:#222;color:#fff;padding:10px;border-radius:8px;text-align:center;z-index:9}
-.hint{color:#7a6f4c;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1;min-width:110px}.row>.s{flex:0 0 auto;min-width:0}.row label{margin:0}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}.split2{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:start}
+.pvw{background:#fffdf4;border:1px dashed var(--acc);border-radius:12px;padding:12px;position:sticky;top:68px;max-height:calc(100vh - 90px);overflow:auto}.pvw.sm{position:static;max-height:none}
+.pvh{font-size:12px;color:var(--pri);font-weight:700;margin-bottom:8px}
+.pa h1{font-size:24px}.pa .tg{color:var(--grn);font-size:12px;font-weight:600}.pa .mt{color:var(--mut);font-size:13px;margin:4px 0 10px}.pa img{width:100%;border-radius:8px}
+.rich p{margin:.6em 0}.rich h2{font-size:1.5em}.rich h3{font-size:1.25em}.rich ul,.rich ol{padding-inline-start:1.4em}.rich blockquote{border-inline-start:4px solid var(--acc);margin:.8em 0;padding:.2em 1em;color:var(--mut)}.rich a{color:var(--pri);text-decoration:underline}
+.fs1{font-size:.8em}.fs2{font-size:.9em}.fs4{font-size:1.2em}.fs5{font-size:1.5em}.fs6{font-size:2em}.fs7{font-size:2.6em}.al-center{text-align:center}.al-right{text-align:right}.al-left{text-align:left}.al-justify{text-align:justify}
+.tb{display:flex;flex-wrap:wrap;gap:4px;background:#f5efd9;border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;padding:6px}
+.tb button,.tb select{width:auto;padding:4px 9px;font-size:13px;background:#fff;border:1px solid var(--line);color:var(--ink)}
+.rte{min-height:200px;border:1px solid var(--line);border-radius:0 0 8px 8px;padding:10px;background:#fff;overflow:auto}
+.bd{display:inline-block;padding:0 10px;border-radius:99px;background:#eee;font-size:12px}.bd.ok{background:#dff3d4;color:#2a5a14}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:14px 0}
+.st{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}.st b{display:block;font-size:30px;color:var(--pri)}.st span{font-size:13px;color:var(--mut)}
+.mini{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg,#fff)}.mini .mh{background:var(--grn,#3f7d2c);color:#fff;padding:12px;text-align:center}.mini .mh img{width:100%;display:block}
+.mini .mn{background:#fff;padding:6px;display:flex;gap:6px;flex-wrap:wrap}.mini .mn span{padding:2px 10px;border-radius:99px;font-size:13px;color:var(--mut)}.mini .mn span.on{background:var(--pri);color:#fff}
+.mini .mb{padding:10px}.mini .mc{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:6px}.mini .bb{background:var(--acc);color:#2a1a05}
+.adp{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px;background:#fff}.adp .lk2{font-size:12px;color:var(--pri);margin-top:4px;word-break:break-all}
+.cm{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px}.rep{background:#f5efd9;border-radius:6px;padding:4px 10px;margin-top:4px;color:var(--pri)}
+.lg{display:grid;place-items:center;min-height:70vh;padding:16px}.lg .card{width:100%;max-width:380px}.er{color:var(--red)}
+.hint{color:var(--mut);font-size:13px}
+.msg{position:fixed;bottom:16px;right:16px;left:16px;max-width:420px;margin:auto;background:#222;color:#fff;padding:10px;border-radius:8px;text-align:center;z-index:99}
+@media(max-width:860px){.shell{display:block}aside{position:static;height:auto;display:flex;overflow-x:auto;padding:6px;gap:4px;border-left:0;border-bottom:1px solid var(--line)}aside h4{display:none}aside button{white-space:nowrap;width:auto;gap:6px}.split,.split2{grid-template-columns:1fr}.pvw{position:static;max-height:none}}
 </style>
 </head>
 <body>
-<header><b>لوحة التحكم</b><a href="index.html" target="_blank">فتح الموقع</a></header>
+<header><b>لوحة تحكم مناسبات صراوة</b><span id="me" style="font-size:14px"></span><a href="index.html" target="_blank">فتح الموقع</a></header>
 <div id="app"></div>
 <script>
+const API="https://script.google.com/macros/s/AKfycbyKDELYGajGcSeXCiqWdfdcwte6qHkScNmER3oaQKfvsPGZpNYGk28vCxPIXk37eJusCQ/exec";
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm=s=>String(s||"").replace(/[\u064B-\u065F\u0640]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").toLowerCase();
 const SEC=["أخبار صراوة","أخبار عاجلة","مناسبات صراوة","أفراح وزفاف","خطوبة","مواليد","تهنئة وتكريم","عزاء ووفاة","شخصيات صراوة","رموز وشخصيات عامة","مال وأعمال","اقتصاد","سياسة","بنوك","بورصة","سياحة","مؤتمرات وندوات","فن وثقافة","رياضة","صحة","تعليم","تكنولوجيا","مجتمع","مبادرات أهلية","أعمال خيرية","المغتربون","خدمات القرية","مقالات الرأي","تحقيقات وتقارير","حوارات صحفية","أخبار المؤسسات","إعلانات مبوبة","مسابقات","استطلاعات الرأي","فيديو","صور","إنفوجراف","أرشيف صراوة","هيئة التحرير","إعداد المجلة"];
 const HBL={hero:"الخبر الرئيسي",events:"المناسبات القادمة",top:"الأكثر قراءة",picks:"اختيارات هيئة التحرير",main:"أقسام صراوة الرئيسية",more:"أقسام أخرى",poll:"استطلاع الرأي",news:"النشرة البريدية",follow:"تابعنا"};
 const IC=["home","news","cal","users","trophy","grid","search","bookmark","send"];
 const NAV0=[["home","الرئيسية","#home"],["news","أخبار صراوة","#s-0"],["cal","مناسبات صراوة","#s-2"],["users","شخصيات صراوة","#s-8"],["trophy","مسابقات","#s-32"],["grid","كل الأقسام","#sections"],["search","بحث","#search"],["bookmark","المحفوظات","#saved"],["send","أرسل مشاركتك","#submit"]];
-const POS=[["top","أعلى الصفحة"],["mid","بين الأقسام"],["article","داخل المقال"],["bottom","أسفل الرئيسية"]];
-let S=null,ED=null,UE=null,TAB="set",API="https://script.google.com/macros/s/AKfycbyKDELYGajGcSeXCiqWdfdcwte6qHkScNmER3oaQKfvsPGZpNYGk28vCxPIXk37eJusCQ/exec",TK=sessionStorage.getItem("adm_t")||"";
-const msg=t=>{const d=document.createElement("div");d.className="msg";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2500)};
+const POSL={top:"أعلى الصفحة",mid:"بين الأقسام",article:"داخل المقال",bottom:"أسفل الرئيسية"};
+const RL={owner:"مالك",chief:"رئيس تحرير",editor:"محرر",moderator:"مشرف",ads:"مسؤول إعلانات"};
+const TB={owner:["arts","cmts","inbox","dash","ads","users","log","set","home","pages"],chief:["arts","cmts","inbox","dash"],editor:["arts"],moderator:["cmts","inbox"],ads:["ads"]};
+const NAVG=[["تحرير",[["arts","المقالات"],["cmts","الردود والتعليقات"],["inbox","مشاركات الجمهور"]]],["الإدارة",[["dash","المؤشرات"],["ads","الإعلانات"],["users","المستخدمون"],["log","سجل العمليات"]]],["الشكل والمحتوى",[["set","الإعدادات والألوان"],["home","الرئيسية والقوائم"],["pages","الصفحات والنصوص"]]]];
+let S=null,ED=null,UE=null,TAB="arts",TK=sessionStorage.getItem("adm_t")||"",SIG="",QA="",FA="",RG=null;
+const TD=()=>new Date().toISOString().slice(0,10);
+/* ---------- تنظيف النص المنسق ---------- */
+function clean(h){const d=new DOMParser().parseFromString("<body>"+h,"text/html").body,OK="P BR B STRONG I EM U H2 H3 UL OL LI A BLOCKQUOTE SPAN DIV FONT HR".split(" ");
+ (function w(n){[...n.childNodes].forEach(c=>{if(c.nodeType===3)return;if(c.nodeType!==1){c.remove();return}w(c);const t=c.tagName;
+  if(OK.indexOf(t)<0){if(/^(SCRIPT|STYLE|IFRAME|OBJECT|EMBED|LINK|META|FORM|INPUT|BUTTON|TEXTAREA|SELECT|SVG|MATH|IMG)$/.test(t))c.remove();else c.replaceWith(...c.childNodes);return}
+  const sz=t==="FONT"?+c.getAttribute("size"):0,al=c.style.textAlign||c.getAttribute("align")||"",hr=t==="A"?c.getAttribute("href")||"":"",cl=new Set(String(c.getAttribute("class")||"").split(" ").filter(x=>/^(fs[1-7]|al-(center|right|left|justify))$/.test(x)));
+  if(sz>=1&&sz<=7)cl.add("fs"+sz);if(/^(center|right|left|justify)$/.test(al))cl.add("al-"+al);
+  [...c.attributes].forEach(a=>c.removeAttribute(a.name));if(cl.size)c.setAttribute("class",[...cl].join(" "));
+  if(t==="A"){if(/^(https?:|mailto:|tel:)/i.test(hr)){c.setAttribute("href",hr);c.setAttribute("target","_blank");c.setAttribute("rel","noopener")}else{c.replaceWith(...c.childNodes);return}}
+  if(t==="FONT"){const s=document.createElement("span");s.className=c.className;s.append(...c.childNodes);c.replaceWith(s)}})})(d);return d.innerHTML}
+const rich=s=>/<[a-z][\s\S]*>/i.test(String(s??""))?clean(String(s)):String(s??"").split(/\n+/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join("");
+const yt=u=>{const m=String(u||"").match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/);return m?`<div style="aspect-ratio:16/9;margin:10px 0"><iframe src="https://www.youtube-nocookie.com/embed/${m[1]}" style="width:100%;height:100%;border:0;border-radius:8px" allowfullscreen></iframe></div>`:""};
+const https=u=>/^https:\/\//.test(u||"");
+/* ---------- الاتصال ---------- */
+const msg=t=>{const d=document.createElement("div");d.className="msg";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)};
 async function api(action,d={}){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({token:TK,action,...d})});const j=await r.json();if(j.error==="expired"){sessionStorage.removeItem("adm_t");TK="";login("انتهت الجلسة، سجّل الدخول من جديد");throw new Error("انتهت الجلسة")}if(j.error)throw new Error(j.error);return j}
+const wrap=async(f,ok)=>{try{await f();if(ok)msg(ok)}catch(e){msg(e.message)}};
 const gp=(o,p)=>p.split(".").reduce((x,k)=>x?.[k],o);
 function sp(o,p,v){const k=p.split(".");let t=o;k.slice(0,-1).forEach(x=>t=t[x]??={});t[k[k.length-1]]=v}
-function F(l,p,t,o={}){const v=gp(o.a?ED:o.u?UE:S.cfg,p),at=`data-p="${p}"${o.a?' data-sc="a"':o.u?' data-sc="u"':""}${o.y?' data-y="1"':""}${o.ln?' data-l="1"':""}`;
+/* ---------- الحقول ---------- */
+function F(l,p,t,o={}){const sc=o.a?"a":o.u?"u":"c",v=gp(sc==="a"?ED:sc==="u"?UE:S.cfg,p),at=`data-p="${p}" data-sc="${sc}"${o.y?' data-y="1"':""}${o.ln?' data-l="1"':""}`;
  if(t==="chk")return`<label class="row"><span class="s"><input type="checkbox" ${at} ${(o.y?v==="نعم":(v===undefined||+v!==0&&v!==""))?"checked":""}></span><span>${l}</span></label>`;
  if(t==="area")return`<label>${l}</label><textarea rows="${o.r||4}" ${at}>${esc(o.ln?(v||[]).join("\n"):v)}</textarea>`;
  if(t==="sel")return`<label>${l}</label><select ${at}>${o.opts.map(([k,x])=>`<option value="${esc(k)}"${String(v)===String(k)?" selected":""}>${esc(x)}</option>`).join("")}</select>`;
- return`<label>${l}</label><input type="${t||"text"}" ${at} value="${esc(t==="date"?String(v||"").slice(0,10):v)}">`}
-document.addEventListener("input",e=>{const t=e.target,p=t.dataset.p;if(!p)return;let v=t.value;
- if(t.type==="checkbox")v=t.dataset.y?(t.checked?"نعم":""):(t.checked?1:0);
- if(t.dataset.l)v=v.split("\n").map(x=>x.trim()).filter(Boolean);
- sp(t.dataset.sc==="a"?ED:t.dataset.sc==="u"?UE:S.cfg,p,v)});
+ const inp=`<input type="${t||"text"}" ${at}${o.dir?' dir="ltr"':""} value="${esc(t==="date"?String(v||"").slice(0,10):v)}"${o.dis?" disabled":""}>`;
+ return`<label>${l}</label>`+(o.up?`<div class="row">${inp}<span class="s"><button type="button" class="o" onclick="up('${p}','${sc}')">رفع صورة</button></span></div>`:inp)}
+document.addEventListener("input",e=>{const t=e.target,r=t.closest&&t.closest(".rte");
+ if(r){sp(r.dataset.o==="a"?ED:S.cfg,r.dataset.r,clean(r.innerHTML));pv();return}
+ const p=t.dataset&&t.dataset.p;if(!p)return;let v=t.value;if(t.type==="checkbox")v=t.dataset.y?(t.checked?"نعم":""):(t.checked?1:0);if(t.dataset.l)v=v.split("\n").map(x=>x.trim()).filter(Boolean);
+ sp(t.dataset.sc==="a"?ED:t.dataset.sc==="u"?UE:S.cfg,p,v);pv()});
+document.addEventListener("selectionchange",()=>{const s=getSelection();if(!s.rangeCount)return;const n=s.anchorNode,el=n&&(n.nodeType===1?n:n.parentElement);if(el&&el.closest&&el.closest(".rte"))RG=s.getRangeAt(0).cloneRange()});
+document.addEventListener("paste",e=>{const r=e.target.closest&&e.target.closest(".rte");if(!r)return;e.preventDefault();document.execCommand("insertText",false,e.clipboardData.getData("text/plain"))});
+function cmd(c,v){if(!RG)return msg("اضغط داخل المحرر أولاً");const n=RG.commonAncestorContainer,el=(n.nodeType===1?n:n.parentElement).closest(".rte");if(!el)return;el.focus();const s=getSelection();s.removeAllRanges();s.addRange(RG);document.execCommand(c,false,v||null);el.dispatchEvent(new Event("input",{bubbles:true}))}
+const lnk=()=>{const u=prompt("الرابط (يبدأ بـ https://)");if(u)cmd("createLink",u)};
+const TBH=`<div class="tb" onmousedown="if(event.target.tagName!=='SELECT')event.preventDefault()"><button type="button" onclick="cmd('bold')"><b>B</b></button><button type="button" onclick="cmd('italic')"><i>I</i></button><button type="button" onclick="cmd('underline')"><u>U</u></button><select onchange="cmd('fontSize',this.value);this.selectedIndex=0"><option>الحجم</option><option value="2">صغير</option><option value="3">عادي</option><option value="5">كبير</option><option value="6">كبير جداً</option><option value="7">ضخم</option></select><button type="button" onclick="cmd('formatBlock','h2')">عنوان</button><button type="button" onclick="cmd('formatBlock','h3')">فرعي</button><button type="button" onclick="cmd('formatBlock','p')">فقرة</button><button type="button" onclick="cmd('formatBlock','blockquote')">اقتباس</button><button type="button" onclick="cmd('insertUnorderedList')">• قائمة</button><button type="button" onclick="cmd('insertOrderedList')">1. قائمة</button><button type="button" onclick="cmd('justifyRight')">يمين</button><button type="button" onclick="cmd('justifyCenter')">وسط</button><button type="button" onclick="cmd('justifyLeft')">يسار</button><button type="button" onclick="lnk()">رابط</button><button type="button" onclick="cmd('removeFormat')">مسح</button></div>`;
+const RTE=(p,o)=>`${TBH}<div class="rte rich" contenteditable="true" data-r="${p}" data-o="${o}">${rich(gp(o==="a"?ED:S.cfg,p))}</div>`;
+function up(p,o){const i=document.createElement("input");i.type="file";i.accept="image/*";i.onchange=()=>{const f=i.files[0];if(!f)return;const im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+ wrap(async()=>{msg("جارٍ الرفع...");const r=await api("upload",{name:f.name.replace(/\.\w+$/,"")+".jpg",data:c.toDataURL("image/jpeg",.82).split(",")[1]});sp(o==="a"?ED:S.cfg,p,r.url);render()},"تم رفع الصورة")};im.src=URL.createObjectURL(f)};i.click()}
+/* ---------- المعاينات ---------- */
+const aprev=a=>`<div class="pa"><span class="tg">${esc(a.section)}</span><h1>${esc(a.title)||"عنوان المقال"}</h1>${a.subtitle?`<h3>${esc(a.subtitle)}</h3>`:""}<div class="mt">${esc(a.author||"")} • ${esc(String(a.date||"").slice(0,10))}</div>${https(a.img)?`<img src="${esc(a.img)}" alt="">`:""}<div class="rich">${rich(a.body)}</div>${yt(a.video)}</div>`;
+const adp=(a,i)=>{const td=TD(),on=+a.active!==0&&(!a.start||String(a.start).slice(0,10)<=td)&&(!a.end||String(a.end).slice(0,10)>=td),m=a.media||"";let b="";
+ if(a.kind==="video")b=yt(m)||(https(m)?`<video src="${esc(m)}" controls muted style="width:100%"></video>`:"");
+ else if(a.kind==="image")b=https(m)?`<img src="${esc(m)}" style="width:100%;border-radius:8px">`:"";
+ else b=`<b>${esc(a.title||"نص الإعلان")}</b>`;
+ return`<div class="adp"><small>إعلان ${i+1} • ${POSL[a.pos]||""} • <span class="bd ${on?"ok":""}">${on?"ظاهر الآن":"غير ظاهر"}</span></small><div>${b||'<p class="hint">أضف رابط الصورة أو الفيديو</p>'}</div><div class="lk2">↗ ${esc(a.link||"بدون رابط")}</div></div>`};
+const PV={
+ arts:()=>aprev(ED||{}),
+ ads:()=>S.cfg.ads.map(adp).join("")||'<p class="hint">لا توجد إعلانات: لن تظهر أي مساحة إعلانية في الموقع.</p>',
+ set:()=>{const c=S.cfg,k=c.colors||{};return`<div class="mini" style="--pri:${esc(k.pri)};--acc:${esc(k.acc)};--grn:${esc(k.grn)};--bg:${esc(k.bg)}"><div class="mh">${https(c.banner)?`<img src="${esc(c.banner)}" alt="">`:`<b>${esc(c.name||"")}</b>`}</div><div class="mn"><span class="on">الرئيسية</span><span>الأقسام</span><span>بحث</span></div><div class="mb"><div class="mc"><small style="color:var(--grn);font-weight:600">قسم</small><h3>عنوان خبر تجريبي</h3></div><button class="bb">زر</button></div></div><p class="hint">الشريط العاجل: ${+c.ticker===0?"مخفي":"ظاهر"} • التعليقات: ${+c.comments===0?"مغلقة":"مفتوحة"} • النشرة: ${+c.newsletter===0?"مخفية":"ظاهرة"}</p>`},
+ home:()=>`<div class="mini"><div class="mn">${S.cfg.nav.filter(x=>+x.on!==0).map(x=>`<span>${esc(x.t)}</span>`).join("")}</div><div class="mb">${S.cfg.home.filter(x=>+x.on!==0).map((x,i)=>`<div class="mc">${i+1}. ${HBL[x.id]||esc(x.id)}</div>`).join("")}</div></div>`};
+function pv(){if(TAB==="pages"){["about","privacy","ads"].forEach(k=>{const e=$("#pp-"+k),p=S.cfg.pages[k];if(e)e.innerHTML=`<h2>${esc(p[0])}</h2><div class="rich">${rich(p[1])}</div>`});return}
+ const e=$("#pv");if(e&&PV[TAB])e.innerHTML=PV[TAB]()}
+const split=(f,t)=>`<div class="split"><div>${f}</div><div class="pvw"><div class="pvh">المعاينة المباشرة</div><div id="pv">${PV[t]()}</div></div></div>`;
+/* ---------- الصفحات ---------- */
 const mv=(p,i,d)=>{const a=gp(S.cfg,p),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];render()};
 const rm=(p,i)=>{gp(S.cfg,p).splice(i,1);render()};
 const ad=(p,o)=>{gp(S.cfg,p).push(o);render()};
-const UD=p=>(i)=>`<span class="s"><button class="o" onclick="mv('${p}',${i},-1)">↑</button> <button class="o" onclick="mv('${p}',${i},1)">↓</button></span>`;
-const SV=`<p><button class="g" onclick="saveCfg()">حفظ التغييرات</button></p><p class="hint">تظهر التغييرات للزوار عند فتح الموقع أو تحديثه.</p>`;
+const UD=p=>i=>`<span class="s"><button class="o" onclick="mv('${p}',${i},-1)">↑</button> <button class="o" onclick="mv('${p}',${i},1)">↓</button></span>`;
+const SV=`<p><button class="g" onclick="saveCfg()">حفظ التغييرات ونشرها</button></p><p class="hint">تظهر التغييرات للزوار تلقائياً خلال دقيقة.</p>`;
+const stBtn=(sh,row,ok)=>`<button class="g s" onclick="st('${sh}',${row},'${ok}')">${ok}</button><button class="o s" onclick="st('${sh}',${row},'مرفوض')">رفض</button><button class="r s" onclick="dr('${sh}',${row})">حذف</button>`;
+function listA(r){const n=norm(QA),ed=S.role==="editor",h=S.arts.map((a,i)=>[a,i]).filter(([a])=>(!FA||a.status===FA)&&(!n||norm(a.title+" "+a.section+" "+a.author).includes(n))).sort((x,y)=>String(y[0].date).localeCompare(String(x[0].date)))
+ .map(([a,i])=>`<div class="card"><div class="row"><div><b>${esc(a.title)}</b><br><small class="hint">${esc(a.section)} • ${esc(String(a.date).slice(0,10))} • ${esc(a.author||"")}</small></div><span class="s"><span class="bd ${a.status==="منشور"?"ok":""}">${esc(a.status)}</span></span></div><p class="row"><button class="o s" onclick="ED={...S.arts[${i}]};render()">تعديل</button><button class="o s" onclick="dupA(${i})">نسخ</button>${ed?"":`<button class="g s" onclick="pubA(${i})">${a.status==="منشور"?"إلغاء النشر":"نشر"}</button><button class="r s" onclick="delA(${i})">حذف</button>`}</p></div>`).join("")||'<p class="hint">لا توجد مقالات مطابقة.</p>';
+ if(r)return h;$("#la").innerHTML=h}
 const V={
-set:()=>`<div class="card"><b>بيانات المجلة</b>${F("اسم المجلة","name")}${F("رابط صورة البانر (فارغ = البانر الحالي)","banner")}</div>
-<div class="card"><b>الألوان</b><div class="row">${[["pri","الرئيسي"],["acc","التمييز"],["grn","الأخضر"],["bg","الخلفية"]].map(([k,x])=>F(x,"colors."+k,"color")).join("")}</div></div>
-<div class="card"><b>التواصل الاجتماعي</b>${F("رابط فيسبوك","fb")}${F("رقم واتساب بصيغة دولية","wa")}${F("رابط يوتيوب","yt")}${F("رابط تيليجرام","tg")}</div>
-<div class="card"><b>العناصر</b>${F("شريط الأخبار العاجلة","ticker","chk")}${F("التعليقات","comments","chk")}${F("النشرة البريدية","newsletter","chk")}</div>`+SV,
-home:()=>{const c=S.cfg,u=UD("home"),n=UD("nav");return`<div class="card"><b>ترتيب الصفحة الرئيسية</b>${c.home.map((x,i)=>`<div class="row"><span>${HBL[x.id]||x.id}</span><span class="s">${F("","home."+i+".on","chk")}</span>${u(i)}</div>`).join("")}</div>
-<div class="card"><b>قائمة التنقل</b>${c.nav.map((x,i)=>`<div class="card"><div class="row">${F("الأيقونة","nav."+i+".i","sel",{opts:IC.map(k=>[k,k])})}${F("الاسم","nav."+i+".t")}${F("الرابط","nav."+i+".h")}</div><div class="row">${F("ظاهر","nav."+i+".on","chk")}${n(i)}<span class="s"><button class="r" onclick="rm('nav',${i})">حذف</button></span></div></div>`).join("")}<button class="o" onclick="ad('nav',{i:'home',t:'جديد',h:'#home',on:1})">+ إضافة رابط</button></div>`+SV},
-ads:()=>`<p class="hint">المساحة لا تظهر في الموقع إلا بعد إضافة إعلان فعّال داخل فترته، وتختفي عند عدم وجود إعلان.</p>${S.cfg.ads.map((a,i)=>`<div class="card"><div class="row">${F("المكان","ads."+i+".pos","sel",{opts:POS})}${F("النوع","ads."+i+".kind","sel",{opts:[["image","صورة"],["video","فيديو"],["link","رابط نصي"]]})}</div>${F("رابط الصورة أو الفيديو (يوتيوب أو mp4)","ads."+i+".media")}${F("رابط الانتقال للموقع","ads."+i+".link")}${F("العنوان أو النص","ads."+i+".title")}<div class="row">${F("يبدأ","ads."+i+".start","date")}${F("ينتهي","ads."+i+".end","date")}</div><div class="row">${F("فعّال","ads."+i+".active","chk")}<span class="s"><button class="r" onclick="rm('ads',${i})">حذف الإعلان</button></span></div></div>`).join("")}<button class="o" onclick="ad('ads',{id:'ad'+Date.now(),pos:'top',kind:'image',media:'',link:'',title:'',start:'',end:'',active:1})">+ إعلان جديد</button>`+SV,
-txt:()=>{const c=S.cfg;return`<div class="card"><b>هيئة التحرير</b>${c.editorial.map((x,i)=>`<div class="row">${F("المنصب","editorial."+i+".0")}${F("الاسم","editorial."+i+".1")}<span class="s"><button class="r" onclick="rm('editorial',${i})">حذف</button></span></div>`).join("")}<button class="o" onclick="ad('editorial',['منصب','الاسم'])">+ إضافة</button></div>
-<div class="card"><b>استطلاع الرأي</b>${F("السؤال","poll.q")}${F("الخيارات (كل خيار في سطر)","poll.o","area",{ln:1})}</div>
-${[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].map(([k,x])=>`<div class="card"><b>صفحة: ${x}</b>${F("العنوان","pages."+k+".0")}${F("النص","pages."+k+".1","area",{r:5})}</div>`).join("")}`+SV},
-arts:()=>ED?artForm():`<p><button class="g" onclick="ED={status:'مسودة',date:new Date().toISOString().slice(0,10)};render()">+ مقال جديد</button></p>`+S.arts.map((a,i)=>[a,i]).sort((x,y)=>String(y[0].date).localeCompare(String(x[0].date))).map(([a,i])=>`<div class="card"><b>${esc(a.title)}</b><br><small>${esc(a.section)} • ${esc(String(a.date).slice(0,10))} • ${esc(a.status)}</small><p class="row"><button class="o s" onclick="ED={...S.arts[${i}]};render()">تعديل</button>${S.role==="editor"?"":`<button class="r s" onclick="delA(${i})">حذف</button>`}</p></div>`).join(""),
-users:()=>usersV(),
-inbox:()=>{const L=(t,sh,A,ok)=>`<h3>${t}</h3>`+(A.length?[...A].reverse().map(({row,r})=>`<div class="card"><small>${esc(String(r[1]).slice(0,10))} • ${esc(r[2])} • الحالة: ${esc(r[6])} • مرجع: ${esc(r[0])}</small><br><b>${esc(r[3])}</b> ${esc(r[4])}<p>${esc(r[5])}</p><p class="row"><button class="g s" onclick="st('${sh}',${row},'${ok}')">${ok}</button><button class="o s" onclick="st('${sh}',${row},'مرفوض')">رفض</button><button class="r s" onclick="dr('${sh}',${row})">حذف</button></p></div>`).join(""):"<p>لا يوجد.</p>");return L("التعليقات","التعليقات",S.coms,"معتمد")+L("المشاركات","المشاركات",S.subs,"مقبول")}};
-const af=(l,p,t,o={})=>F(l,p,t,{...o,a:1});
-const artForm=()=>`<div class="card"><datalist id="sl">${SEC.map(s=>`<option>${s}</option>`).join("")}</datalist>${af("العنوان","title")}${af("عنوان فرعي","subtitle")}<label>القسم</label><input list="sl" data-p="section" data-sc="a" value="${esc(ED.section)}">${af("النص (كل فقرة في سطر)","body","area",{r:9})}${af("رابط الصورة","img")}${af("رابط فيديو يوتيوب","video")}${af("روابط صور إضافية (مفصولة بمسافة)","gallery")}<div class="row">${af("التاريخ","date","date")}${S.role==="editor"?"<p class='hint'>يُحفظ كمسودة ويعتمده رئيس التحرير.</p>":af("الحالة","status","sel",{opts:[["مسودة","مسودة"],["منشور","منشور"]]})}</div><div class="row">${af("الكاتب","author")}${af("المحرر","editor")}</div>${af("الوسوم (بفاصلة)","tags")}<div class="row">${af("تاريخ المناسبة","eventdate","date")}${af("المكان","place")}</div>${af("خبر عاجل","breaking","chk",{y:1})}${af("اختيار هيئة التحرير","pick","chk",{y:1})}<p class="row"><button class="g s" onclick="saveA()">حفظ</button><button class="o s" onclick="ED=null;render()">رجوع</button></p></div>`;
-const wrap=async(f,ok)=>{try{await f();if(ok)msg(ok)}catch(e){msg(e.message)}};
-const saveCfg=()=>wrap(()=>api("saveConfig",{cfg:S.cfg}),"تم الحفظ");
-const saveA=()=>wrap(async()=>{await api("saveArticle",{a:ED});ED=null;await load()},"تم حفظ المقال");
+arts:()=>ED?split(`<div class="card"><datalist id="sl">${SEC.map(s=>`<option>${s}</option>`).join("")}</datalist>${F("العنوان","title","text",{a:1})}${F("عنوان فرعي","subtitle","text",{a:1})}<label>القسم</label><input list="sl" data-p="section" data-sc="a" value="${esc(ED.section)}"><label>النص</label>${RTE("body","a")}${F("رابط الصورة","img","text",{a:1,up:1,dir:1})}${F("رابط فيديو يوتيوب","video","text",{a:1,dir:1})}${F("روابط صور إضافية (مفصولة بمسافة)","gallery","text",{a:1,dir:1})}<div class="row">${F("تاريخ النشر (تاريخ مستقبلي = جدولة)","date","date",{a:1})}${S.role==="editor"?"":F("الحالة","status","sel",{a:1,opts:[["مسودة","مسودة"],["منشور","منشور"]]})}</div><div class="row">${F("الكاتب","author","text",{a:1})}${F("المحرر","editor","text",{a:1})}</div>${F("الوسوم (بفاصلة)","tags","text",{a:1})}<div class="row">${F("تاريخ المناسبة","eventdate","date",{a:1})}${F("المكان","place","text",{a:1})}</div>${S.role==="editor"?'<p class="hint">يحفظ المقال كمسودة ويراجعه رئيس التحرير وينشره.</p>':F("خبر عاجل","breaking","chk",{a:1,y:1})+F("اختيار هيئة التحرير","pick","chk",{a:1,y:1})}<p class="row"><button class="g s" onclick="saveA()">حفظ</button><button class="o s" onclick="ED=null;render()">رجوع</button></p></div>`,"arts")
+ :`<div class="row" style="margin-bottom:12px"><input placeholder="بحث في المقالات" value="${esc(QA)}" oninput="QA=this.value;listA()"><select onchange="FA=this.value;listA()"><option value="">كل الحالات</option><option${FA==="منشور"?" selected":""}>منشور</option><option${FA==="مسودة"?" selected":""}>مسودة</option></select><span class="s"><button class="g" onclick="newA()">+ مقال جديد</button></span></div><div id="la">${listA(1)}</div>`,
+cmts:()=>S.coms.length?[...S.coms].reverse().map(({row,r})=>{const a=S.arts.find(x=>String(x.id)===String(r[0]));return`<div class="card"><div class="split2"><div><small class="hint">${esc(String(r[1]).slice(0,10))} • ${esc(a?a.title:"مقال "+r[0])} • <span class="bd ${r[6]==="معتمد"?"ok":""}">${esc(r[6])}</span></small><br><b>${esc(r[3])}</b><p>${esc(r[5])}</p><label>رد المجلة</label><textarea rows="2" oninput="rp(${row},this.value)" id="rt${row}">${esc(r[7]||"")}</textarea><p class="row"><button class="s" onclick="saveR(${row})">حفظ الرد</button>${stBtn("التعليقات",row,"معتمد")}</p></div><div class="pvw sm"><div class="pvh">كما سيظهر في الموقع</div><div class="cm"><b>${esc(r[3])}</b><p style="margin:4px 0">${esc(r[5])}</p><div class="rep" id="rv${row}">${r[7]?"رد المجلة: "+esc(r[7]):""}</div></div></div></div></div>`}).join(""):'<p class="hint">لا توجد تعليقات.</p>',
+inbox:()=>S.subs.length?[...S.subs].reverse().map(({row,r})=>`<div class="card"><small class="hint">${esc(String(r[1]).slice(0,10))} • ${esc(r[2])} • <span class="bd ${r[6]==="مقبول"?"ok":""}">${esc(r[6])}</span> • مرجع: ${esc(r[0])}</small><br><b>${esc(r[3])}</b> <span dir="ltr">${esc(r[4])}</span><p>${esc(r[5])}</p><p class="row">${S.role==="moderator"?"":`<button class="s" onclick="toA(${row})">تحويل إلى مقال</button>`}${stBtn("المشاركات",row,"مقبول")}</p></div>`).join(""):'<p class="hint">لا توجد مشاركات.</p>',
+dash:()=>{const s=S.stats,K=[["pub","مقالات منشورة"],["draft","مسودات"],["pc","تعليقات بانتظار الاعتماد"],["ns","مشاركات جديدة"],["subs","مشتركو النشرة"],["votes","أصوات الاستطلاع"],["clicks","نقرات الإعلانات"]];return`<h2>مرحباً ${esc(S.name)}</h2><div class="stats">${K.map(([k,x])=>`<div class="st"><b>${s[k]??0}</b><span>${x}</span></div>`).join("")}</div><div class="card"><b>اختصارات</b><p class="row"><button class="g s" onclick="go2('arts');newA()">+ مقال جديد</button><button class="o s" onclick="go2('cmts')">مراجعة التعليقات</button><button class="o s" onclick="go2('inbox')">مراجعة المشاركات</button></p></div>`},
+ads:()=>split(`<p class="hint">لا تظهر المساحة في الموقع إلا بوجود إعلان فعّال داخل فترته، وتختفي تلقائياً عند عدم وجود إعلان.</p>${S.cfg.ads.map((a,i)=>`<div class="card"><div class="row">${F("المكان","ads."+i+".pos","sel",{opts:Object.entries(POSL)})}${F("النوع","ads."+i+".kind","sel",{opts:[["image","صورة"],["video","فيديو"],["link","رابط نصي"]]})}</div>${F("رابط الصورة أو الفيديو (يوتيوب أو mp4)","ads."+i+".media","text",{up:1,dir:1})}${F("رابط الانتقال للموقع","ads."+i+".link","text",{dir:1})}${F("العنوان أو النص","ads."+i+".title")}<div class="row">${F("يبدأ","ads."+i+".start","date")}${F("ينتهي","ads."+i+".end","date")}</div><div class="row">${F("فعّال","ads."+i+".active","chk")}<span class="s"><button class="r" onclick="rm('ads',${i})">حذف</button></span></div></div>`).join("")}<p><button class="o" onclick="ad('ads',{id:'ad'+Date.now(),pos:'top',kind:'image',media:'',link:'',title:'',start:'',end:'',active:1})">+ إعلان جديد</button></p>${SV}`,"ads"),
+users:()=>UE?`<div class="card"><b>${UE._e?"تعديل مستخدم":"مستخدم جديد"}</b>${F("اسم المستخدم (إنجليزي)","u","text",{u:1,dir:1,dis:UE._e})}${F("الاسم الظاهر","name","text",{u:1})}${F("الدور","role","sel",{u:1,opts:Object.entries(RL).filter(([k])=>k!=="owner")})}${F(UE._e?"كلمة سر جديدة (اتركها فارغة بدون تغيير)":"كلمة السر (8 أحرف فأكثر)","pass","password",{u:1})}${F("فعّال","active","sel",{u:1,opts:[["نعم","نعم"],["لا","لا"]]})}<p class="hint">رئيس تحرير: المقالات والتعليقات والمشاركات • محرر: يكتب مسودات فقط • مشرف: التعليقات والمشاركات • مسؤول إعلانات: الإعلانات فقط.</p><p class="row"><button class="g s" onclick="saveU()">حفظ</button><button class="o s" onclick="UE=null;render()">رجوع</button></p></div>`
+ :`<p><button class="g" onclick="UE={role:'editor',active:'نعم'};render()">+ مستخدم جديد</button></p>`+S.users.map((u,i)=>`<div class="card"><div class="row"><div><b>${esc(u.name||u.u)}</b><br><small class="hint" dir="ltr">${esc(u.u)}</small></div><span class="s"><span class="bd">${esc(RL[u.role]||u.role)}</span> <span class="bd ${u.active==="لا"?"":"ok"}">${u.active==="لا"?"موقوف":"فعّال"}</span></span></div><p class="row"><button class="o s" onclick="UE={...S.users[${i}],pass:'',_e:1};render()">تعديل</button><button class="r s" onclick="delU(${i})">حذف</button></p></div>`).join(""),
+log:()=>`<div class="card">${S.log.length?S.log.map(x=>`<div class="row" style="border-bottom:1px solid var(--line);padding:4px 0"><small>${esc(String(x[0]).slice(0,16).replace("T"," "))}</small><b>${esc(x[1])}</b><span>${esc(x[2])}</span><small>${esc(x[3])}</small></div>`).join(""):'<p class="hint">لا توجد عمليات.</p>'}</div>`,
+set:()=>split(`<div class="card"><b>بيانات المجلة</b>${F("اسم المجلة","name")}${F("رابط صورة البانر (فارغ = البانر الحالي)","banner","text",{up:1,dir:1})}</div><div class="card"><b>الألوان</b><div class="row">${[["pri","الرئيسي"],["acc","التمييز"],["grn","الأخضر"],["bg","الخلفية"]].map(([k,x])=>F(x,"colors."+k,"color")).join("")}</div></div><div class="card"><b>التواصل الاجتماعي</b>${F("رابط فيسبوك","fb","text",{dir:1})}${F("رقم واتساب بصيغة دولية","wa","text",{dir:1})}${F("رابط يوتيوب","yt","text",{dir:1})}${F("رابط تيليجرام","tg","text",{dir:1})}</div><div class="card"><b>العناصر</b>${F("شريط الأخبار العاجلة","ticker","chk")}${F("التعليقات","comments","chk")}${F("النشرة البريدية","newsletter","chk")}</div>${SV}`,"set"),
+home:()=>{const c=S.cfg,u=UD("home"),n=UD("nav");return split(`<div class="card"><b>ترتيب الصفحة الرئيسية</b>${c.home.map((x,i)=>`<div class="row"><span>${HBL[x.id]||esc(x.id)}</span><span class="s">${F("","home."+i+".on","chk")}</span>${u(i)}</div>`).join("")}</div><div class="card"><b>قائمة التنقل</b>${c.nav.map((x,i)=>`<div class="card"><div class="row">${F("الأيقونة","nav."+i+".i","sel",{opts:IC.map(k=>[k,k])})}${F("الاسم","nav."+i+".t")}${F("الرابط","nav."+i+".h","text",{dir:1})}</div><div class="row">${F("ظاهر","nav."+i+".on","chk")}${n(i)}<span class="s"><button class="r" onclick="rm('nav',${i})">حذف</button></span></div></div>`).join("")}<button class="o" onclick="ad('nav',{i:'home',t:'جديد',h:'#home',on:1})">+ إضافة رابط</button></div>${SV}`,"home")},
+pages:()=>{const c=S.cfg;return[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].map(([k,x])=>`<div class="card"><b>صفحة: ${x}</b><div class="split2"><div>${F("العنوان","pages."+k+".0")}<label>المحتوى (فقرات وتنسيق وأحجام خط)</label>${RTE("pages."+k+".1","c")}</div><div class="pvw sm"><div class="pvh">المعاينة المباشرة</div><div id="pp-${k}"></div></div></div></div>`).join("")+`<div class="card"><b>هيئة التحرير</b>${c.editorial.map((x,i)=>`<div class="row">${F("المنصب","editorial."+i+".0")}${F("الاسم","editorial."+i+".1")}<span class="s"><button class="r" onclick="rm('editorial',${i})">حذف</button></span></div>`).join("")}<button class="o" onclick="ad('editorial',['منصب','الاسم'])">+ إضافة</button></div><div class="card"><b>استطلاع الرأي</b>${F("السؤال","poll.q")}${F("الخيارات (كل خيار في سطر)","poll.o","area",{ln:1})}</div>`+SV}};
+/* ---------- العمليات ---------- */
+const go2=k=>{TAB=k;ED=null;UE=null;render()};
+const newA=()=>{ED={status:"مسودة",date:TD(),author:S.name,body:""};render()};
+const dupA=i=>{ED={...S.arts[i],id:"",title:S.arts[i].title+" (نسخة)",status:"مسودة",fb:""};render()};
+const pubA=i=>wrap(async()=>{await api("saveArticle",{a:{id:S.arts[i].id,status:S.arts[i].status==="منشور"?"مسودة":"منشور"}});await load()},"تم");
 const delA=i=>confirm("حذف المقال؟")&&wrap(async()=>{await api("delArticle",{id:S.arts[i].id});await load()},"تم الحذف");
+const saveA=()=>wrap(async()=>{if(!ED.title)throw new Error("اكتب العنوان");await api("saveArticle",{a:ED});ED=null;await load()},"تم حفظ المقال");
+const saveCfg=()=>wrap(()=>api("saveConfig",{cfg:S.cfg}),"تم الحفظ");
 const st=(sheet,row,status)=>wrap(async()=>{await api("setStatus",{sheet,row,status});await load()},"تم");
 const dr=(sheet,row)=>confirm("حذف نهائي؟")&&wrap(async()=>{await api("delRow",{sheet,row});await load()},"تم الحذف");
-const RL={owner:"مالك",chief:"رئيس تحرير",editor:"محرر",moderator:"مشرف",ads:"مسؤول إعلانات"};
-const TB={owner:["set","home","ads","txt","arts","inbox","users"],chief:["arts","inbox"],editor:["arts"],moderator:["inbox"],ads:["ads"]};
-function usersV(){if(UE)return`<div class="card">${F("اسم المستخدم (إنجليزي)","u","text",{u:1})}${F("الاسم الظاهر","name","text",{u:1})}${F("الدور","role","sel",{u:1,opts:Object.entries(RL)})}${F(UE.isNew?"كلمة السر (8 أحرف على الأقل)":"كلمة سر جديدة (اتركها فارغة للإبقاء)","pass","password",{u:1})}${F("فعّال","active","chk",{u:1,y:1})}<p class="row"><button class="g s" onclick="saveU()">حفظ</button><button class="o s" onclick="UE=null;render()">رجوع</button></p></div>`;
- return`<p><button class="g" onclick="UE={isNew:1,role:'editor',active:'نعم'};render()">+ مستخدم جديد</button></p><p class="hint">المالك الأساسي: admin، وكلمة سره هي ADMIN_KEY.</p>`+(S.users||[]).map((x,i)=>`<div class="card"><b>${esc(x.name||x.u)}</b> <small>(${esc(x.u)})</small><br><small>${RL[x.role]||esc(x.role)} • ${x.active==="لا"?"موقوف":"فعّال"}</small><p class="row"><button class="o s" onclick="UE={u:S.users[${i}].u,name:S.users[${i}].name,role:S.users[${i}].role,active:S.users[${i}].active==='لا'?'':'نعم'};render()">تعديل</button><button class="r s" onclick="delU(${i})">حذف</button></p></div>`).join("")}
+const rp=(row,v)=>{$("#rv"+row).textContent=v?"رد المجلة: "+v:""};
+const saveR=row=>wrap(async()=>{await api("replyComment",{row,text:$("#rt"+row).value});await load()},"تم حفظ الرد");
+const toA=row=>{const r=S.subs.find(x=>x.row===row).r;ED={status:"مسودة",date:TD(),author:S.name,title:String(r[5]).slice(0,60),body:String(r[5]).split(/\n+/).map(p=>`<p>${esc(p)}</p>`).join(""),section:/مناسبة|زفاف|خطوبة/.test(r[2])?"مناسبات صراوة":""};go2b()};
+const go2b=()=>{TAB="arts";render()};
 const saveU=()=>wrap(async()=>{await api("saveUser",{u:UE.u,name:UE.name,role:UE.role,pass:UE.pass,active:UE.active==="نعم"?"نعم":"لا"});UE=null;await load()},"تم حفظ المستخدم");
 const delU=i=>confirm("حذف المستخدم؟")&&wrap(async()=>{await api("delUser",{u:S.users[i].u});await load()},"تم الحذف");
-function render(){const N={set:"الإعدادات",home:"الرئيسية والقوائم",ads:"الإعلانات",txt:"النصوص",arts:"المقالات",inbox:"الوارد",users:"المستخدمون"},T=TB[S.role]||[];if(!T.includes(TAB))TAB=T[0];
- $("#app").innerHTML=`<nav>${T.map(k=>`<button class="${TAB===k?"on":"o"}" onclick="TAB='${k}';ED=null;UE=null;render()">${N[k]}</button>`).join("")}<button class="r" onclick="logout()">خروج</button></nav><main><p class="hint">${esc(S.name)} (${RL[S.role]||""})</p>${V[TAB]()}</main>`}
-function login(m){$("#app").innerHTML=`<main><div class="card"><h2>تسجيل الدخول</h2>${m?`<p style="color:var(--red)">${esc(m)}</p>`:""}<label>اسم المستخدم (المالك: admin)</label><input id="lm" dir="ltr" autocapitalize="off" value="${esc(localStorage.getItem("adm_u")||"")}"><label>كلمة السر</label><input id="lk" type="password"><p></p><button class="g" onclick="go()">دخول</button></div></main>`}
-async function go(){const u=$("#lm").value.trim();localStorage.setItem("adm_u",u);
- try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({action:"login",user:u,pass:$("#lk").value})});const j=await r.json();if(j.error)throw new Error(j.error);TK=j.token;sessionStorage.setItem("adm_t",TK);await load()}
- catch(e){login(/JSON|fetch/i.test(e.message)?"تعذر الاتصال، تأكد من رابط Web App":e.message)}}
+/* ---------- العرض ---------- */
+function render(){const T=TB[S.role]||[];if(!T.includes(TAB))TAB=T[0];
+ const bd={cmts:S.coms.filter(x=>x.r[6]==="جديد").length,inbox:S.subs.filter(x=>x.r[6]==="جديد").length};
+ $("#app").innerHTML=`<div class="shell"><aside>${NAVG.map(([g,L])=>{const l=L.filter(x=>T.includes(x[0]));return l.length?`<h4>${g}</h4>`+l.map(([k,x])=>`<button class="${TAB===k?"on":""}" onclick="go2('${k}')">${x}${bd[k]?`<i>${bd[k]}</i>`:""}</button>`).join(""):""}).join("")}</aside><main>${V[TAB]()}</main></div>`;
+ $("#me").innerHTML=esc(S.name)+" ("+RL[S.role]+") <button class='lk' onclick='logout()'>خروج</button>";pv()}
+function login(m){$("#app").innerHTML=`<div class="lg"><div class="card"><h2>تسجيل الدخول</h2>${m?`<p class="er">${esc(m)}</p>`:""}<label>اسم المستخدم</label><input id="lm" dir="ltr" autocapitalize="off" value="${esc(localStorage.getItem("adm_u")||"")}"><label>كلمة السر</label><input id="lk" type="password" onkeydown="if(event.key==='Enter')go()"><p></p><button class="g" style="width:100%" onclick="go()">دخول</button></div></div>`;$("#me").textContent=""}
+async function go(){const u=$("#lm").value.trim();localStorage.setItem("adm_u",u);try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({action:"login",user:u,pass:$("#lk").value})}),j=await r.json();if(j.error)throw new Error(j.error);TK=j.token;sessionStorage.setItem("adm_t",TK);await load()}catch(e){login(e.message)}}
 function logout(){sessionStorage.removeItem("adm_t");TK="";S=null;login()}
-async function load(){if(!API||!TK)return login();
- try{S=await api("getAll");const c=S.cfg;if(c){c.home=c.home||Object.keys(HBL).map(id=>({id,on:1}));c.nav=c.nav||NAV0.map(([i,t,h])=>({i,t,h,on:1}));c.ads=c.ads||[];c.colors={pri:"#9a6208",acc:"#e8ad1c",grn:"#3f7d2c",bg:"#fcf8e6",...(c.colors||{})};c.editorial=c.editorial||[["رئيس التحرير","الاسم"]];c.poll=c.poll||{q:"",o:[]};
-  c.pages=c.pages||{};[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].forEach(([k,x])=>c.pages[k]=c.pages[k]||[x,""])}render()}
- catch(e){if(TK)login(e.message)}}
+function fix(n){const c=n.cfg=n.cfg||{};c.home=c.home||Object.keys(HBL).map(id=>({id,on:1}));c.nav=c.nav||NAV0.map(([i,t,h])=>({i,t,h,on:1}));c.ads=c.ads||[];c.colors={pri:"#9a6208",acc:"#e8ad1c",grn:"#3f7d2c",bg:"#fcf8e6",...(c.colors||{})};c.editorial=c.editorial||[];c.poll=c.poll||{q:"",o:[]};c.pages=c.pages||{};[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].forEach(([k,x])=>c.pages[k]=c.pages[k]||[x,""]);["arts","subs","coms","users","log"].forEach(k=>n[k]=n[k]||[]);n.stats=n.stats||{}}
+async function load(){if(!TK||!API)return login();try{const n=await api("getAll");fix(n);S=n;SIG=JSON.stringify(n);render()}catch(e){if(TK)login(e.message)}}
+const cnt=n=>({c:n.coms.filter(x=>x.r[6]==="جديد").length,s:n.subs.filter(x=>x.r[6]==="جديد").length});
+setInterval(async()=>{if(document.hidden||!TK||!S||ED||UE)return;const a=document.activeElement;if(a&&(/INPUT|TEXTAREA|SELECT/.test(a.tagName)||a.isContentEditable))return;if(!["arts","cmts","inbox","dash","log"].includes(TAB))return;
+ try{const n=await api("getAll");fix(n);const g=JSON.stringify(n);if(g===SIG)return;const o=cnt(S),m=cnt(n);SIG=g;S=n;if(m.c>o.c)msg("وصل تعليق جديد");if(m.s>o.s)msg("وصلت مشاركة جديدة");render()}catch(e){}},30000);
 load();
 </script>
 </body>
