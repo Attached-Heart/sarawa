@@ -322,7 +322,7 @@ function clean(h){const d=new DOMParser().parseFromString("<body>"+h,"text/html"
 const rich=s=>/<[a-z][\s\S]*>/i.test(String(s??""))?clean(String(s)):String(s??"").split(/\n+/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join("");
 function route(){
  const h=location.hash.slice(1)||"home";let k=h,v;
- if(/^s-\d+$/.test(h)){k="section";v=+h.slice(2)}else if(h.startsWith("a-")){k="article";v=h.slice(2)}
+ if(/^s-\d+$/.test(h)){k="section";v=+h.slice(2)}else if(h.startsWith("a-")){k="article";v=h.slice(2)}else if(h.startsWith("n-")){k="anotice";v=h.slice(2)}
  if(PAGES[h]){app.innerHTML=`<h1>${esc(PAGES[h][0])}</h1><div class="rich">${rich(PAGES[h][1])}</div>`}else app.innerHTML=(view[k]||view.home)(v);
  const isH=!PAGES[h]&&(k==="home"||!view[k]);document.body.classList.toggle("home",isH);
  if(k==="search"){document.body.classList.add("so");const q=$("#hq");if(q&&q.value!==Q)q.value=Q;ds(Q);if(!Q&&q&&!KEEP)q.focus()}else if(document.activeElement!==$("#hq"))document.body.classList.remove("so");
@@ -345,6 +345,7 @@ function crumbs(h){const H=["الرئيسية","#home"],T={notifications:"الإ
  if(/^s-\d+$/.test(h)&&SEC[+h.slice(2)])c=[H,[SEC[+h.slice(2)]]];
  else if(h.startsWith("a-")){const a=DATA.find(x=>String(x.id)===h.slice(2));
   if(a){const i=SEC.findIndex(x=>norm(x)===norm(a.section));c=[H].concat(i>=0?[[SEC[i],"#s-"+i]]:[],[[a.title]])}else c=[H,["خبر"]]}
+ else if(h.startsWith("n-"))c=[H,["الإشعارات","#notifications"],["إشعار"]];
  else if(PAGES[h])c=[H,[PAGES[h][0]]];
  else if(T[h])c=[H,[T[h]]];
  else c=[["الرئيسية"]];
@@ -403,17 +404,24 @@ function nShow(a){const o={body:a.section||"",icon:"icon-192.png",badge:"icon-19
  (navigator.serviceWorker?navigator.serviceWorker.ready.then(r=>r.showNotification(a.title,o)):Promise.reject()).catch(()=>{try{new Notification(a.title,o)}catch(e){}})}
 function ntoast(h,m){const d=document.createElement("a");d.className="toast";d.href=h;if(/^https?:/i.test(h)){d.target="_blank";d.rel="noopener"}d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),5000)}
 /* ===== إشعارات الإدارة ===== */
+let ADML=ls("nl")||[];
+view.anotice=id=>{const f=ADML.find(n=>String(n.id)===String(id)),x=NT.find(n=>n.id==="m"+id)||(f&&{id:"m"+f.id,t:f.t,b:f.b,l:f.l,d:f.d});
+ if(!x){nAdm().then(()=>{if(location.hash==="#n-"+id&&ADML.some(n=>String(n.id)===String(id)))rr()});return`<div class="note">الإشعار غير متاح الآن. <a href="#notifications">العودة للإشعارات</a></div>`}
+ nRead("m"+id);const lk=safeL(x.l),ex=/^https?:/i.test(lk),lb=ex?"فتح الرابط":/^#a-/.test(lk)?"قراءة الخبر":/^#s-/.test(lk)?"فتح القسم":"فتح الصفحة",
+ body=esc(x.b||"").split(/\n+/).filter(Boolean).map(p=>`<p>${p.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>')}</p>`).join("");
+ return`<article class="art"><div class="tools"><button class="ib" onclick="history.length>1?history.back():location.hash='notifications'">رجوع</button></div><span class="tag">من الإدارة</span><h1>${esc(x.t)}</h1><div class="meta"><span>${tm(x.d)}</span></div><div class="rich">${body||'<p class="mu">لا يوجد نص إضافي.</p>'}</div>${lk?`<p><a class="btn g" href="${esc(lk)}"${ex?' target="_blank" rel="noopener"':""}>${lb}</a></p>`:""}</article>`};
 const safeL=l=>/^https?:\/\//i.test(l||"")||/^#[\w-]+$/.test(l||"")?l:"";
-function ntItem(x){const lk=x.adm?safeL(x.l):"#a-"+x.id,ex=/^https?:/i.test(lk),pic=!x.adm&&img(x.i)?`<img src="${th(x.i,200)}" alt="" loading="lazy">`:`<span class="ni">${ic("bell")}</span>`;
+function ntItem(x){const lk=x.adm?"#n-"+String(x.id).slice(1):"#a-"+x.id,ex=false,pic=!x.adm&&img(x.i)?`<img src="${th(x.i,200)}" alt="" loading="lazy">`:`<span class="ni">${ic("bell")}</span>`;
  return`<a class="item nt${x.r?"":" un"}${x.adm?" adm":""}" href="${esc(lk||"#notifications")}"${ex?' target="_blank" rel="noopener"':""} onclick="nRead('${esc(x.id)}')${lk?"":";rr();return false"}">${pic}<div><span class="tag">${esc(x.s||"")}</span><h3>${esc(x.t)}</h3>${x.b?`<p class="mu" style="margin:2px 0;font-size:14px">${esc(x.b)}</p>`:""}<small>${tm(x.d)}</small></div></a>`}
 async function nAdm(){if(!API_URL||OFF)return;try{const L=await fetch(API_URL+"?type=notifs").then(r=>r.json());if(!Array.isArray(L))return;
+ ADML=L;ls("nl",L);
  const sn=ls("nas"),first=!sn,seen=new Set((sn||[]).map(String)),fresh=L.filter(x=>!seen.has(String(x.id)));if(!first&&!fresh.length)return;
  ls("nas",[...seen,...fresh.map(x=>String(x.id))].slice(-300));
  const items=fresh.filter(x=>!first||Date.now()-new Date(x.d)<2592e5);   /* أول زيارة: آخر 3 أيام فقط وتُعتبر مقروءة */
  if(!items.length){swSeen();return}
  NT=[...items.map(x=>({id:"m"+x.id,t:x.t,b:x.b,l:x.l,d:x.d,s:"من الإدارة",adm:1,r:0})),...NT].sort((a,b)=>new Date(b.d)-new Date(a.d)).slice(0,60);nSave();swSeen();
  if(location.hash==="#notifications")rr();if(first)return;
- const one=items.length===1,x=items[0],lk=safeL(x.l)||"#notifications";
+ const one=items.length===1,x=items[0],lk="#n-"+x.id;
  if(document.hidden&&"Notification"in window&&Notification.permission==="granted"&&ls("non")!==0)nShow(one?{id:"m"+x.id,title:x.t,section:x.b,url:lk}:{id:"multi-m",title:"مناسبات صراوة",section:items.length.toLocaleString("ar-EG")+" إشعارات جديدة",url:"#notifications"});
  else ntoast(one?lk:"#notifications",one?x.t:items.length.toLocaleString("ar-EG")+" إشعارات جديدة")}catch(e){}}
 function nCheck(){if(!DATA.length)return;const sn=ls("ns");
