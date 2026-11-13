@@ -1,8 +1,17 @@
-/*v4*/
+/*v5*/
 const META="sr-meta";
-self.addEventListener("install",()=>self.skipWaiting());
+const SHELL=["./","index.html","manifest.json","banner.jpg","icon-192.png","icon.png"];
+self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open("sr1").then(c=>Promise.all(SHELL.map(u=>c.add(u).catch(()=>{})))))});
 self.addEventListener("activate",e=>e.waitUntil(clients.claim()));
-self.addEventListener("fetch",e=>{if(e.request.method!=="GET"||new URL(e.request.url).origin!==location.origin)return;e.respondWith(fetch(e.request).then(r=>{const c=r.clone();caches.open("sr1").then(x=>x.put(e.request,c));return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match("./"))))});
+/* نسخة قديمة من استجابة الـAPI تُعلَّم برأس يقرؤه التطبيق ليُنبّه المستخدم أنه دون اتصال */
+const stale=r=>{const h=new Headers(r.headers);h.set("x-sr-offline","1");return new Response(r.body,{status:r.status,statusText:r.statusText,headers:h})};
+async function trim(c,n){const k=await c.keys();for(const x of k.slice(0,Math.max(0,k.length-n)))await c.delete(x)}
+const swr=(q,name,n)=>caches.open(name).then(async c=>{const m=await c.match(q),f=fetch(q).then(r=>{if(r.ok||r.type==="opaque"){c.put(q,r.clone());trim(c,n)}return r}).catch(()=>m||Response.error());return m||f});
+self.addEventListener("fetch",e=>{const q=e.request;if(q.method!=="GET")return;const u=new URL(q.url);
+ if(u.origin===location.origin){e.respondWith(fetch(q).then(r=>{if(r.ok){const c=r.clone();caches.open("sr1").then(x=>x.put(q,c))}return r}).catch(()=>caches.match(q).then(r=>r||(q.mode==="navigate"?caches.match("./").then(x=>x||caches.match("index.html")):Response.error()))));return}
+ if(/(^|\.)script\.google(usercontent)?\.com$/.test(u.hostname)&&/type=(boot|comments|rx|rxall)/.test(u.search)){e.respondWith(fetch(q).then(r=>{if(r.ok){const c=r.clone();caches.open("sr-api").then(x=>x.put(q,c))}return r}).catch(()=>caches.match(q).then(r=>r?stale(r):Response.error())));return}
+ if(/fonts\.(googleapis|gstatic)\.com$/.test(u.hostname)){e.respondWith(swr(q,"sr-font",40));return}
+ if(q.destination==="image"){e.respondWith(swr(q,"sr-img",250))}});
 /* الصفحة ترسل رابط الـAPI وقائمة الأخبار المعروفة لنستخدمها في الفحص الدوري */
 self.addEventListener("message",e=>{const d=e.data||{};if(d.t==="seen")e.waitUntil(caches.open(META).then(c=>c.put("m",new Response(JSON.stringify({api:d.api,seen:d.seen})))))});
 const show=a=>self.registration.showNotification(a.title,{body:a.section||"",icon:"icon-192.png",badge:"icon-192.png",tag:"sr-"+a.id,dir:"rtl",lang:"ar",data:{url:a.url||"./#a-"+a.id}});

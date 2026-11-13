@@ -129,16 +129,61 @@ html.dark .note.ok{background:#25391a;color:#cfe9b8}html.dark .note.er{backgroun
 .bub{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 14px;flex:1;min-width:0}
 .fab{position:fixed;bottom:20px;inset-inline-start:16px;width:46px;height:46px;border-radius:50%;border:0;background:var(--pri);color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px #0004;cursor:pointer;z-index:40;animation:fi .3s}.fab[hidden]{display:none}
 .toast{cursor:pointer;display:block}
+/* ===== v3: هيدر + قائمة جانبية + فوتر + دون اتصال ===== */
+#tk[hidden]{display:none}
+.top{position:sticky;top:0;z-index:30;background:var(--card);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:2px;flex-wrap:wrap;min-height:58px}
+.top .ib{width:42px;height:42px}
+.brand{display:flex;align-items:center;gap:10px;font:800 19px Cairo,sans-serif;color:var(--head);margin-inline-end:auto;padding:0 6px;min-width:0}
+.brand img{border-radius:8px;flex:none}.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs{display:none;order:9;flex:1 1 100%;padding:0 0 10px;margin:0}.so .hs{display:block}
+.hs input{width:100%;height:42px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:0 18px;font:inherit}
+@media(min-width:760px){.hs,.so .hs{display:block;order:0;flex:0 1 360px;padding:0;margin-inline-end:8px}#sb{display:none}}
+nav{position:static}
+body:not(.home) header{display:none}
+.off{background:#fff3cd;color:#6b4e00;border-bottom:1px solid #e8d58a;text-align:center;font-size:14px;padding:8px 16px}.off[hidden]{display:none}
+html.dark .off{background:#4a3b0a;color:#ffe9a6;border-color:#6d5a1c}
+.ov{position:fixed;inset:0;background:#0007;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}.ov.open{opacity:1;pointer-events:auto}
+.dw{position:fixed;top:0;bottom:0;inset-inline-start:0;width:min(86vw,320px);background:var(--card);color:var(--ink);z-index:70;display:flex;flex-direction:column;transform:translateX(100%);visibility:hidden;transition:transform .25s,visibility .25s;box-shadow:-8px 0 30px #0004}
+.dw.open{transform:none;visibility:visible}
+.dhd{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);font:800 18px Cairo,sans-serif;color:var(--head)}
+.dbd{flex:1;overflow-y:auto;padding:8px;overscroll-behavior:contain}
+.dl{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:10px;font:600 15px Cairo,sans-serif;color:var(--ink)}.dl:hover{background:var(--line)}.dl.on{background:var(--pri);color:#fff}
+.dsh{font:800 13px Cairo,sans-serif;color:var(--mut);padding:16px 14px 6px}
+.cn{font-style:normal;font-size:12px;background:var(--line);color:var(--mut);border-radius:999px;padding:0 9px;min-width:24px;text-align:center}.dl.on .cn{background:#fff3;color:#fff}
+.dft{padding:12px;border-top:1px solid var(--line);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}.dft .btn{width:100%;justify-content:center;margin:0}.dft .btn[hidden]{display:none}
+body.lock{overflow:hidden}
+.dh{display:flex;align-items:center;gap:10px;font:700 15px Cairo,sans-serif;color:var(--mut);margin:24px 0 10px}.dh::after{content:"";flex:1;height:1px;background:var(--line)}
+footer{background:var(--card);border-top:4px solid var(--grn);padding:0;margin-top:20px;color:var(--ink);font:500 15px/1.8 Cairo,sans-serif;text-align:start}
+.fg{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:28px;padding-top:34px;padding-bottom:26px}
+.fc{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.fc h4{margin:0 0 6px;font:800 16px Cairo,sans-serif;color:var(--head)}
+footer .fc a{margin:0;color:var(--mut);font-weight:500}footer .fc a:hover{color:var(--pri)}
+.fbr b{font:800 22px Cairo,sans-serif;color:var(--head)}.fbr p{margin:0 0 6px;color:var(--mut);line-height:1.8;font-size:14px;max-width:34ch}
+.fbr .soc{display:flex;gap:4px;margin-inline-start:-8px}
+.fcp{border-top:1px solid var(--line);padding-top:14px;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));color:var(--mut);font-size:13px;text-align:center}
+@media(max-width:720px){.fg{grid-template-columns:1fr 1fr;gap:22px}.fbr{grid-column:1/-1}}
+@media print{.top,.off,.fab,.dw,.ov{display:none}}
 </style>
 </head>
 <body>
-<div class="prefs"><div class="wrap"><span id="soc"></span><span><a class="ib" id="bell" href="#notifications" aria-label="الإشعارات" title="الإشعارات"></a><button class="ib" id="inst" hidden onclick="inst()" aria-label="تثبيت التطبيق" title="تثبيت التطبيق"></button><button class="ib" id="fb" onclick="fsz()" aria-label="حجم الخط" title="حجم الخط"></button><button class="ib" id="tb" onclick="theme()" aria-label="الوضع الليلي" title="الوضع الليلي"></button></span></div></div>
+<div class="top"><div class="wrap">
+<button class="ib" id="mn" onclick="dr(1)" aria-label="القائمة" aria-controls="dw"></button>
+<a class="brand" href="#home"><img src="icon-192.png" alt="" width="30" height="30" onerror="this.remove()"><span id="hb">مناسبات صراوة</span></a>
+<form class="hs" role="search" onsubmit="hsGo(event)"><input id="hq" type="search" placeholder="ابحث في المجلة..." aria-label="بحث" oninput="hsIn(this.value)" enterkeyhint="search"></form>
+<button class="ib" id="sb" onclick="hsTog()" aria-label="بحث"></button>
+<a class="ib" id="bell" href="#notifications" aria-label="الإشعارات" title="الإشعارات"></a>
+<button class="ib" id="tb" onclick="theme()" aria-label="الوضع الليلي" title="الوضع الليلي"></button>
+</div></div>
+<div id="off" class="off" role="status" hidden></div>
 <div class="ticker" id="tk">جارٍ التحميل...</div>
 <header><div class="wrap"><a href="#home"><h1 class="sr" id="hn">مناسبات صراوة</h1><img id="bn" src="banner.jpg" alt="مناسبات صراوة - تشارككم لحظاتكم دائما" width="1200" height="527"></a></div></header>
 <nav><div class="wrap" id="nav"></div></nav>
 <main><div class="wrap" id="app"></div></main>
 <footer id="ft"></footer>
 <button class="fab" id="up" hidden onclick="scrollTo({top:0,behavior:'smooth'})" aria-label="للأعلى"></button>
+<div class="ov" id="ov" onclick="dr(0)"></div>
+<aside class="dw" id="dw" aria-hidden="true" aria-label="القائمة الجانبية"><div class="dhd"><b id="dn"></b><button class="ib" onclick="dr(0)" aria-label="إغلاق">✕</button></div><div class="dbd" id="dl"></div><div class="dft"><button class="btn g" id="inst" hidden onclick="inst()">تثبيت التطبيق على الهاتف</button></div></aside>
 <script>
 /* ===== الإعدادات ===== */
 const API_URL = "https://script.google.com/macros/s/AKfycbyKDELYGajGcSeXCiqWdfdcwte6qHkScNmER3oaQKfvsPGZpNYGk28vCxPIXk37eJusCQ/exec";   // رابط Web App من Apps Script
@@ -179,17 +224,17 @@ const view={
 home(){
  if(!DATA.length)return LOADED?"<p>لا توجد مقالات منشورة بعد.</p>":skel();
  const [h,...r]=DATA,bg=img(h.img)?` style="background-image:url('${th(h.img,1000)}')"`:"",td=new Date(new Date().toDateString());
- const hd=(x,i)=>`<h2 class="h">${ic(i)} ${x}</h2>`,sx=i=>{const L=by(i);return L.length?`<h2 class="h"><a href="#s-${i}">${SEC[i]}</a></h2>${grid(L.slice(0,3))}`:""};
+ const hd=x=>`<h2 class="h">${x}</h2>`,sx=i=>{const L=by(i);return L.length?`<h2 class="h"><a href="#s-${i}">${SEC[i]}</a></h2>${grid(L.slice(0,3))}`:""};
  const B={
   hero:()=>`<div class="lead"><a class="hero" href="#a-${esc(h.id)}"${bg}><span class="tag">${esc(h.section)}</span><h1>${esc(h.title)}</h1><small>${tm(h.date)}</small></a><div class="side">${r.slice(0,3).map(card).join("")}</div></div>`+adSlot("top"),
   events:()=>{const u=DATA.filter(a=>a.eventdate&&new Date(a.eventdate)>=td).sort((a,b)=>new Date(a.eventdate)-new Date(b.eventdate)).slice(0,3);return u.length?hd("المناسبات القادمة","cal")+`<div class="grid">${u.map(a=>`<a class="item" href="#a-${esc(a.id)}"><span class="tag">${fmt(a.eventdate)}</span><h3>${esc(a.title)}</h3><small>${esc(a.place||"")}</small></a>`).join("")}</div>`:""},
   top:()=>{const x=[...DATA].filter(a=>+a.views>0).sort((a,b)=>b.views-a.views).slice(0,4);return x.length?hd("الأكثر قراءة","news")+grid(x):""},
   picks:()=>{const x=DATA.filter(a=>flag(a.pick)).slice(0,4);return x.length?hd("اختيارات هيئة التحرير","bookmark")+grid(x):""},
-  main:()=>MAIN.map(sx).join("")+adSlot("mid"),
-  more:()=>[27,34,35,36].map(sx).join(""),
+  main:()=>(DATA.length>4?`<h2 class="h">آخر الأخبار</h2><div id="hf">${feedH()}</div>`:"")+adSlot("mid"),
+  more:()=>"",
   poll:()=>POLL.q?hd("استطلاع الرأي","grid")+pollH():"",
   news:()=>flag(CFG.newsletter)?hd("النشرة البريدية","send")+`<form class="bar2" onsubmit="nl(event)"><input class="inp" id="ne" type="email" required placeholder="بريدك الإلكتروني"><button class="btn g">اشترك</button></form><div id="nr"></div>`:"",
-  follow:()=>hd("تابعنا","users")+soc(1)+`<a class="btn g" href="#submit">${ic("send")} أرسل مشاركتك</a>`+adSlot("bottom")};
+  follow:()=>hd("تابعنا","users")+soc(1)+`<a class="btn g" href="#submit">أرسل مشاركتك</a>`+adSlot("bottom")};
  return(CFG.home||HB.map(id=>({id,on:1}))).filter(x=>x.on!=0&&B[x.id]).map(x=>B[x.id]()).join("")},
 section(i){
  if(!SEC[i])return view.home();
@@ -208,18 +253,18 @@ article(id){
  const sv=saved().includes(String(a.id));
  const tags=String(a.tags||"").split(/[,،]/).map(x=>x.trim()).filter(Boolean);
  const rel=DATA.filter(x=>x.id!=a.id&&norm(x.section)===norm(a.section)).slice(0,3);
- return`<article class="art"><div id="rp" aria-hidden="true"></div><div class="tools"><button class="ib" onclick="history.length>1?history.back():location.hash='home'">${ic("back")} رجوع</button></div>${(n=>n<0?`<span class="tag">${esc(a.section)}</span>`:`<a class="tag" href="#s-${n}">${esc(a.section)}</a>`)(SEC.findIndex(x=>norm(x)===norm(a.section)))}<h1>${esc(a.title)}</h1>${a.subtitle?`<p class="sub">${esc(a.subtitle)}</p>`:""}<div class="meta">${a.author?`<span>${ic("users")} ${esc(a.author)}</span>`:""}<span>${ic("cal")} ${tm(a.date)}</span><span>${ic("news")} ${mins.toLocaleString("ar-EG")} دقائق قراءة</span></div>
- <div class="tools"><button class="ib" onclick="fs(2)" aria-label="تكبير الخط">أ+</button><button class="ib" onclick="fs(-2)" aria-label="تصغير الخط">أ−</button><button class="ib${sv?" on":""}" onclick="bk('${esc(a.id)}')">${ic("bookmark")} ${sv?"محفوظ":"حفظ"}</button><button class="ib" onclick="cp()">${ic("link")} نسخ الرابط</button><button class="ib" onclick="print()">${ic("print")} طباعة</button></div>
+ return`<article class="art"><div id="rp" aria-hidden="true"></div><div class="tools"><button class="ib" onclick="history.length>1?history.back():location.hash='home'">رجوع</button></div>${(n=>n<0?`<span class="tag">${esc(a.section)}</span>`:`<a class="tag" href="#s-${n}">${esc(a.section)}</a>`)(SEC.findIndex(x=>norm(x)===norm(a.section)))}<h1>${esc(a.title)}</h1>${a.subtitle?`<p class="sub">${esc(a.subtitle)}</p>`:""}<div class="meta">${a.author?`<span>${esc(a.author)}</span>`:""}<span>${tm(a.date)}</span><span>${mins.toLocaleString("ar-EG")} دقائق قراءة</span></div>
+ <div class="tools"><button class="ib" onclick="fs(2)" aria-label="تكبير الخط">أ+</button><button class="ib" onclick="fs(-2)" aria-label="تصغير الخط">أ−</button><button class="ib${sv?" on":""}" onclick="bk('${esc(a.id)}')">${sv?"محفوظ":"حفظ"}</button><button class="ib" onclick="print()">طباعة</button></div>
  ${img(a.img)?`<figure><img src="${th(a.img,1200)}" alt="${esc(a.title)}" fetchpriority="high" decoding="async"></figure>`:""}<div class="rich">${rich(a.body)}</div>
 ${tags.length?`<div class="chips">${tags.map(x=>`<a class="chip" href="#search" onclick="Q='${esc(x).replace(/'/g,"")}'">#${esc(x)}</a>`).join("")}</div>`:""}
-<div id="rx" data-id="${esc(a.id)}">${rxH(a.id)}</div><div class="bar"><button class="btn o" id="tt" onclick="tts()">${ic("vol")} استمع للخبر</button><button class="btn o" onclick="PRE='تصحيح معلومة: ${esc(a.title).replace(/'/g,"")}';location.hash='submit'">إبلاغ عن خطأ</button></div>
+<div id="rx" data-id="${esc(a.id)}">${rxH(a.id)}</div><div class="bar"><button class="btn o" onclick="PRE='تصحيح معلومة: ${esc(a.title).replace(/'/g,"")}';location.hash='submit'">إبلاغ عن خطأ</button></div>
 ${adSlot("article")}${flag(CFG.comments)?`<h2 class="h" id="cms">التعليقات</h2><div id="cl"></div><form onsubmit="cm(event,'${esc(a.id)}')"><input class="inp" id="cn" required placeholder="الاسم"><textarea class="inp" id="ct" rows="3" required placeholder="اكتب تعليقك"></textarea><button class="btn g">إرسال التعليق</button></form><div id="cr"></div>`:""}${rel.length?`<h2 class="h">اقرأ أيضاً</h2>${grid(rel)}`:""}</article>`},
-search(){return`<h1>البحث</h1><input id="q" class="inp" type="search" placeholder="ابحث بالعنوان أو الكاتب أو القسم أو الوسم" oninput="dds(this.value)" value="${esc(Q)}"><div id="res"></div>`},
+search(){return`<h1>نتائج البحث</h1><div id="res" style="margin-top:12px"></div>`},
 saved(){const s=saved();return`<h1>المحفوظات</h1><div style="height:12px"></div>`+grid(DATA.filter(a=>s.includes(String(a.id))))},
 submit(){return`<h1>أرسل مشاركتك</h1><p>خبر، مناسبة، صورة، إعلان، ترشيح شخصية، اقتراح، تصحيح أو بلاغ. سنراجعها قبل النشر.</p>
 <form onsubmit="sub(event)"><label>نوع المشاركة</label><select class="inp" id="st">${["خبر","مناسبة","صورة أو فيديو","إعلان","ترشيح شخصية","اقتراح موضوع","تصحيح معلومة","شكوى أو بلاغ"].map(x=>`<option${PRE.startsWith(x)?" selected":""}>${x}</option>`).join("")}</select>
 <label>الاسم</label><input class="inp" id="sn" required><label>رقم الهاتف أو البريد</label><input class="inp" id="sc" required><label>التفاصيل</label><textarea class="inp" id="sx" rows="6" required>${esc(PRE)}</textarea><button class="btn g">إرسال</button></form><div id="sr"></div><h2 class="h">تتبّع حالة مشاركتك</h2><div class="bar2"><input class="inp" id="tr" dir="ltr" placeholder="الرقم المرجعي SR-..."><button class="btn o" type="button" onclick="trk()">تتبّع</button></div><div id="trr"></div>`},
-contact(){return`<h1>تواصل معنا</h1><p>لنشر خبر أو مناسبة أو الإعلان معنا:</p>${soc(1)}<a class="btn o" href="#submit">${ic("send")} نموذج المشاركة</a>`}
+contact(){return`<h1>تواصل معنا</h1><p>لنشر خبر أو مناسبة أو الإعلان معنا:</p>${soc(1)}<a class="btn o" href="#submit">نموذج المشاركة</a>`}
 };
 const post=async p=>{p.date=new Date().toISOString();p.ref=p.ref||"SR-"+Date.now().toString(36).toUpperCase();if(!API_URL)return{error:"لم يُضبط رابط الاستقبال بعد"};const c=new AbortController(),t=setTimeout(()=>c.abort(),30000);try{return await(await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify(p),signal:c.signal})).json()}catch(e){return{error:e.name==="AbortError"?"انتهت مهلة الاتصال، أعد المحاولة":"تعذر الاتصال، تحقق من الإنترنت وأعد المحاولة"}}finally{clearTimeout(t)}};
 const WAIT='<span class="sp"></span> يرجى الانتظار...';
@@ -248,11 +293,13 @@ function meta(id){const a=DATA.find(x=>String(x.id)===String(id));if(!a)return;d
  let s=document.getElementById("ld");if(!s){s=document.createElement("script");s.id="ld";s.type="application/ld+json";document.head.appendChild(s)}
  s.textContent=JSON.stringify({"@context":"https://schema.org","@type":"NewsArticle",headline:a.title,datePublished:a.date,author:{"@type":"Person",name:a.author||"مناسبات صراوة"},image:a.img||undefined})}
 function ds(v){Q=v;const n=norm(v),r=$("#res");if(!r)return;
- if(!n){r.innerHTML="<p>اكتب كلمة للبحث.</p>";return}
- r.innerHTML=grid(DATA.filter(a=>norm([a.title,a.subtitle,a.body,a.author,a.tags,a.section].join(" ")).includes(n)))}
+ if(!n){r.innerHTML=`<p class="mu">اكتب كلمة في خانة البحث بالأعلى، أو تصفّح الأقسام:</p><div class="chips">${SEC.map((s,i)=>by(i).length?`<a class="chip" href="#s-${i}">${esc(s)}</a>`:"").join("")}</div>`;return}
+ const t=n.split(/\s+/).filter(Boolean),sc=a=>{const all=norm([a.title,a.subtitle,a.body,a.author,a.tags,a.section].join(" "));if(!t.every(w=>all.includes(w)))return -1;const ti=norm(a.title),tg=norm(a.tags);return t.reduce((s,w)=>s+(ti.includes(w)?3:0)+(tg.includes(w)?2:0),0)};
+ const L=DATA.map(a=>[a,sc(a)]).filter(x=>x[1]>=0).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+ r.innerHTML=L.length?`<p class="mu">${AN(L.length,["نتيجة واحدة","نتيجتان","نتائج","نتيجة"])} عن «${esc(v)}»</p>${grid(L)}`:`<p>لا توجد نتائج عن «${esc(v)}». جرّب كلمة أخرى.</p>`}
 function fs(d){const c=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--fs"))+d;document.documentElement.style.setProperty("--fs",Math.min(30,Math.max(14,c))+"px");ls("fs",c)}
 function bk(id){let s=saved();s=s.includes(id)?s.filter(x=>x!==id):[...s,id];ls("sv",s);route()}
-function tst(t){const d=document.createElement("div");d.className="toast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
+function tst(t,ms){const d=document.createElement("div");d.className="toast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),ms||2200)}
 function cp(u){u=u||location.href;navigator.clipboard?navigator.clipboard.writeText(u).then(()=>tst("تم نسخ الرابط"),()=>tst("تعذر النسخ")):tst("المتصفح لا يدعم النسخ")}
 addEventListener("scroll",()=>{const b=$("#rp");if(b){const h=document.documentElement;b.style.transform="scaleX("+Math.min(1,scrollY/Math.max(1,h.scrollHeight-innerHeight))+")"}},{passive:true});
 async function sub(e){e.preventDefault();const f=e.target,r=$("#sr"),ref="SR-"+Date.now().toString(36).toUpperCase(),p={ref,type:$("#st").value,name:$("#sn").value,contact:$("#sc").value,text:$("#sx").value};
@@ -274,31 +321,32 @@ function route(){
  const h=location.hash.slice(1)||"home";let k=h,v;
  if(/^s-\d+$/.test(h)){k="section";v=+h.slice(2)}else if(h.startsWith("a-")){k="article";v=h.slice(2)}
  if(PAGES[h]){app.innerHTML=`<h1>${esc(PAGES[h][0])}</h1><div class="rich">${rich(PAGES[h][1])}</div>`}else app.innerHTML=(view[k]||view.home)(v);
- if(k==="search")ds(Q);
- if(k==="article"){meta(v);cmL(v);rxInit();rxLoad(v);nRead(v)}else document.title=CFG.name;try{speechSynthesis.cancel()}catch(x){}
+ const isH=!PAGES[h]&&(k==="home"||!view[k]);document.body.classList.toggle("home",isH);
+ if(k==="search"){document.body.classList.add("so");const q=$("#hq");if(q&&q.value!==Q)q.value=Q;ds(Q);if(!Q&&q&&!KEEP)q.focus()}else if(document.activeElement!==$("#hq"))document.body.classList.remove("so");
+ if($("#dw").classList.contains("open"))drawer();
+ if(k==="article"){meta(v);cmL(v);rxInit();rxLoad(v);nRead(v)}else document.title=CFG.name;
  document.querySelectorAll("#nav a").forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+h));
  if(!KEEP)scrollTo(0,0)}
 function theme(){const d=document.documentElement.classList.toggle("dark");ls("dk",d);pi()}
 {const d=ls("dk");if(d===null?matchMedia("(prefers-color-scheme:dark)").matches:d)document.documentElement.classList.add("dark");const f=ls("fs");if(f)document.documentElement.style.setProperty("--fs",f+"px")}
 
-const IC={home:'<path d="M3 11l9-8 9 8v10H4z"/><path d="M9 21v-6h6v6"/>',news:'<path d="M4 5h13v14H6a2 2 0 0 1-2-2zM17 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3.2-6 6.5-6s6 2 6.5 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2 .6 3.3 2.4 3.5 6"/>',trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',bookmark:'<path d="M6 3h12v18l-6-4-6 4z"/>',send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',moon:'<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',type:'<path d="M4 7V4h16v3M9 20h6M12 4v16"/>',dl:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',fb:'<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/>',wa:'<path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/><path d="M9 9c0 3 3 6 6 6l1.5-1.5-2-1-1 .7c-1-.4-2-1.4-2.4-2.4l.7-1-1-2z"/>',yt:'<rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z"/>',tg:'<path d="M21.5 3L2.5 10.5l6 2 2 6.5 3-4 5 3.5z"/>',print:'<path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/>',link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',back:'<path d="M9 6l6 6-6 6"/>',bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 21a2 2 0 0 0 4 0"/>',heart:'<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',msg:'<path d="M4 5h16v11H9l-5 4z"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',vol:'<path d="M11 5L6 9H3v6h3l5 4zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',up:'<path d="M6 15l6-6 6 6"/>',like:'<path d="M7 11v9H4v-9zM7 11l4-8c1.5 0 2.5 1 2.5 2.5V9H19a2 2 0 0 1 2 2.3l-1 6.4A2 2 0 0 1 18 19H7"/>'};
+const IC={home:'<path d="M3 11l9-8 9 8v10H4z"/><path d="M9 21v-6h6v6"/>',news:'<path d="M4 5h13v14H6a2 2 0 0 1-2-2zM17 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3.2-6 6.5-6s6 2 6.5 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2 .6 3.3 2.4 3.5 6"/>',trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',bookmark:'<path d="M6 3h12v18l-6-4-6 4z"/>',send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',moon:'<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',type:'<path d="M4 7V4h16v3M9 20h6M12 4v16"/>',dl:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',fb:'<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/>',wa:'<path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/><path d="M9 9c0 3 3 6 6 6l1.5-1.5-2-1-1 .7c-1-.4-2-1.4-2.4-2.4l.7-1-1-2z"/>',yt:'<rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z"/>',tg:'<path d="M21.5 3L2.5 10.5l6 2 2 6.5 3-4 5 3.5z"/>',print:'<path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/>',link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',back:'<path d="M9 6l6 6-6 6"/>',bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 21a2 2 0 0 0 4 0"/>',heart:'<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',msg:'<path d="M4 5h16v11H9l-5 4z"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',up:'<path d="M6 15l6-6 6 6"/>',like:'<path d="M7 11v9H4v-9zM7 11l4-8c1.5 0 2.5 1 2.5 2.5V9H19a2 2 0 0 1 2 2.3l-1 6.4A2 2 0 0 1 18 19H7"/>'};
 const ic=n=>IC[n]?`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`:"";
 let CFG={name:"مناسبات صراوة",fb:FB_URL,wa:WHATSAPP,yt:"",tg:"",banner:"",colors:{},home:null,nav:null,ticker:1,comments:1,newsletter:1};
-const HB=["hero","events","top","picks","main","more","poll","news","follow"];
-const NAV0=[["home","الرئيسية","#home"],["news","أخبار صراوة","#s-0"],["cal","مناسبات صراوة","#s-2"],["users","شخصيات صراوة","#s-8"],["trophy","مسابقات","#s-32"],["grid","كل الأقسام","#sections"],["search","بحث","#search"],["bookmark","المحفوظات","#saved"],["send","أرسل مشاركتك","#submit"]];
+const HB=["hero","main","events","top","picks","more","poll","news","follow"];
+const NAV0=[["home","الرئيسية","#home"],["news","أخبار صراوة","#s-0"],["cal","مناسبات صراوة","#s-2"],["users","شخصيات صراوة","#s-8"],["trophy","مسابقات","#s-32"],["grid","كل الأقسام","#sections"]];
 const soc=big=>[["fb",CFG.fb,"فيسبوك"],["wa",CFG.wa?"https://wa.me/"+String(CFG.wa).replace(/\D/g,""):"","واتساب"],["yt",CFG.yt,"يوتيوب"],["tg",CFG.tg,"تيليجرام"]].filter(x=>/^https:\/\//.test(x[1]||"")).map(([i,u,n])=>big?`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${ic(i)} ${n}</a>`:`<a class="ib" href="${esc(u)}" target="_blank" rel="noopener" aria-label="${n}" title="${n}">${ic(i)}</a>`).join("");
-function pi(){const r=document.documentElement;$("#tb").innerHTML=ic(r.classList.contains("dark")?"sun":"moon");$("#fb").innerHTML=ic("type");$("#inst").innerHTML=ic("dl");$("#up").innerHTML=ic("up");nBadge()}
+function pi(){const r=document.documentElement;$("#tb").innerHTML=ic(r.classList.contains("dark")?"sun":"moon");$("#mn").innerHTML=ic("menu");$("#sb").innerHTML=ic("search");$("#up").innerHTML=ic("up");nBadge()}
 function fsz(){const c=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--fs"))||18;fs(c>=26?-8:4)}
 let dp;addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;$("#inst").hidden=false});function inst(){dp&&dp.prompt()}
-function renderNav(){const L=(CFG.nav||NAV0.map(([i,t,h])=>({i,t,h,on:1}))).filter(x=>x.on!=0);$("#nav").innerHTML=L.map(x=>`<a href="${esc(x.h)}">${ic(x.i)}${esc(x.t)}</a>`).join("");tick();route()}
+function renderNav(){const L=(CFG.nav||NAV0.map(([i,t,h])=>({i,t,h,on:1}))).filter(x=>x.on!=0);$("#nav").innerHTML=L.map(x=>`<a href="${esc(x.h)}">${esc(x.t)}</a>`).join("");tick();route()}
 function applyCfg(c){CFG={...CFG,...c};
  const k=CFG.colors||{},v=[["pri",k.pri],["acc",k.acc],["grn",k.grn],["bg",k.bg]].filter(x=>/^#[0-9a-f]{6}$/i.test(x[1]||""));
  let s=document.getElementById("cs");if(!s){s=document.createElement("style");s.id="cs";document.head.appendChild(s)}
  s.textContent=":root{"+v.map(([n,x])=>`--${n}:${x}`+(n==="grn"?`;--gbg:${x}`:"")).join(";")+"}";
  if(c.editorial)EDITORIAL=c.editorial;if(c.poll&&c.poll.q)POLL={q:c.poll.q,o:c.poll.o||[]};if(c.pages)PAGES={...PAGES,...c.pages};if(Array.isArray(c.ads))ADS=c.ads;
- $("#hn").textContent=CFG.name;if(img(CFG.banner))$("#bn").src=CFG.banner;$("#tk").hidden=!flag(CFG.ticker);
- $("#soc").innerHTML=soc(0);
- $("#ft").innerHTML=`<div class="soc">${soc(0)}</div><div>© ${esc(CFG.name)}</div><div>${[["editorial","هيئة التحرير"],["archive","الأرشيف"],["about","من نحن"],["ads","أعلن معنا"],["privacy","سياسة الخصوصية"],["contact","تواصل معنا"]].map(([h,x])=>`<a href="#${h}">${esc(PAGES[h]?PAGES[h][0]:x)}</a>`).join("")}</div>`;
+ $("#hn").textContent=CFG.name;$("#hb").textContent=CFG.name;if(img(CFG.banner))$("#bn").src=CFG.banner;$("#tk").hidden=!flag(CFG.ticker);
+ foot();
  renderNav()}
 function cmL(id){const c=$("#cl");if(!c||!API_URL)return;fetch(API_URL+"?type=comments&id="+encodeURIComponent(id)).then(r=>r.json()).then(L=>{if(Array.isArray(L))c.innerHTML=L.map(x=>`<div class="cmt"><span class="av">${esc([...String(x.name||"؟")][0])}</span><div class="bub"><b>${esc(x.name)}</b> <small>${tm(x.date)}</small><p style="margin:4px 0 0">${esc(x.text)}</p>${x.reply?`<div class="rep">رد المجلة: ${esc(x.reply)}</div>`:""}</div></div>`).join("")}).catch(()=>{})}
 /* ===== التفاعلات ===== */
@@ -335,11 +383,6 @@ function shr(){const a=curA();if(!a)return;const u=location.href.split("#")[0]+"
  d.onclick=e=>{if(e.target===d)shx()};document.body.appendChild(d)}
 function shx(){document.querySelectorAll(".sh").forEach(x=>x.remove())}
 function nsh(){const a=curA();navigator.share({title:a.title,url:location.href.split("#")[0]+"#a-"+a.id}).catch(()=>{});shx()}
-/* ===== قراءة صوتية ===== */
-function tts(){const s=window.speechSynthesis,b=$("#tt"),L=()=>ic("vol")+" استمع للخبر";if(!s){tst("المتصفح لا يدعم القراءة الصوتية");return}
- if(s.speaking){s.cancel();b.innerHTML=L();return}
- const a=curA(),t=(a.title+". "+($(".rich")?$(".rich").innerText:"")).replace(/\s+/g," "),ch=t.match(/[^.!؟]{1,180}[.!؟]?/g)||[t];
- b.innerHTML=ic("vol")+" إيقاف القراءة";ch.forEach((x,i)=>{const u=new SpeechSynthesisUtterance(x);u.lang="ar-SA";u.rate=.95;if(i===ch.length-1)u.onend=()=>{b.innerHTML=L()};s.speak(u)})}
 /* ===== الإشعارات ===== */
 let NT=ls("nt")||[];
 const nUn=()=>NT.filter(x=>!x.r).length,nSave=()=>{ls("nt",NT);nBadge()};
@@ -348,7 +391,7 @@ function swSeen(){const s=ls("ns");if(!s||!API_URL||!navigator.serviceWorker)ret
 function regPS(){navigator.serviceWorker&&navigator.serviceWorker.ready.then(r=>r.periodicSync&&r.periodicSync.register("sr-new",{minInterval:36e5})).catch(()=>{})}
 function nShow(a){const o={body:a.section||"",icon:"icon-192.png",badge:"icon-192.png",tag:"sr-"+a.id,dir:"rtl",lang:"ar",data:{url:"./"+a.url}};
  (navigator.serviceWorker?navigator.serviceWorker.ready.then(r=>r.showNotification(a.title,o)):Promise.reject()).catch(()=>{try{new Notification(a.title,o)}catch(e){}})}
-function ntoast(h,m){const d=document.createElement("a");d.className="toast";d.href=h;d.innerHTML=ic("bell")+" "+esc(m);document.body.appendChild(d);setTimeout(()=>d.remove(),5000)}
+function ntoast(h,m){const d=document.createElement("a");d.className="toast";d.href=h;d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),5000)}
 function nCheck(){if(!DATA.length)return;const sn=ls("ns");
  if(!sn){ls("ns",DATA.map(a=>String(a.id)));swSeen();return}   /* أول زيارة: لا نُغرق المستخدم بأخبار قديمة */
  const seen=new Set(sn.map(String)),nw=DATA.filter(a=>!seen.has(String(a.id)));if(!nw.length)return;
@@ -365,29 +408,55 @@ function nRead(id){const x=NT.find(n=>String(n.id)===String(id));if(x&&!x.r){x.r
 function nAll(){NT.forEach(x=>x.r=1);nSave();rr()}
 function nClr(){NT=[];nSave();rr()}
 view.notifications=()=>{const sup="Notification"in window,pm=sup?Notification.permission:"",on=pm==="granted"&&ls("non")!==0,fl=ls("nsec")||[];
- const st=!sup?`<div class="note">متصفحك لا يدعم إشعارات الويب. على آيفون: أضف التطبيق إلى الشاشة الرئيسية ثم افتحه من هناك لتفعيل الإشعارات.</div>`:pm==="denied"?`<div class="note er">الإشعارات محظورة. اسمح بها من إعدادات الموقع في المتصفح ثم أعد المحاولة.</div>`:on?`<div class="note ok">${ic("bell")} إشعارات المتصفح مفعّلة. <button class="btn o" onclick="nOff()">إيقاف</button></div>`:`<div class="note"><b>لا يفوتك خبر</b><br>فعّل الإشعارات لتصلك الأخبار الجديدة فور نشرها.<br><button class="btn g" onclick="nOn()">${ic("bell")} تفعيل الإشعارات</button></div>`;
+ const st=!sup?`<div class="note">متصفحك لا يدعم إشعارات الويب. على آيفون: أضف التطبيق إلى الشاشة الرئيسية ثم افتحه من هناك لتفعيل الإشعارات.</div>`:pm==="denied"?`<div class="note er">الإشعارات محظورة. اسمح بها من إعدادات الموقع في المتصفح ثم أعد المحاولة.</div>`:on?`<div class="note ok">إشعارات المتصفح مفعّلة. <button class="btn o" onclick="nOff()">إيقاف</button></div>`:`<div class="note"><b>لا يفوتك خبر</b><br>فعّل الإشعارات لتصلك الأخبار الجديدة فور نشرها.<br><button class="btn g" onclick="nOn()">تفعيل الإشعارات</button></div>`;
  const ch=`<button class="chip${fl.length?"":" on"}" onclick="nSec(-1)">كل الأقسام</button>`+[0,1,2,3,5,6,7,8,18,22,26,32].map(i=>`<button class="chip${fl.includes(norm(SEC[i]))?" on":""}" onclick="nSec(${i})">${SEC[i]}</button>`).join("");
  const L=NT.length?`<div class="bar"><button class="btn o" onclick="nAll()">تعليم الكل كمقروء</button><button class="btn o" onclick="nClr()">مسح الكل</button></div><div class="nl">${NT.map(x=>`<a class="item nt${x.r?"":" un"}" href="#a-${esc(x.id)}" onclick="nRead('${esc(x.id)}')">${img(x.i)?`<img src="${th(x.i,200)}" alt="" loading="lazy">`:`<span class="ni">${ic("bell")}</span>`}<div><span class="tag">${esc(x.s)}</span><h3>${esc(x.t)}</h3><small>${tm(x.d)}</small></div></a>`).join("")}</div>`:`<div class="note">لا توجد إشعارات بعد. ستظهر هنا الأخبار الجديدة فور نشرها.</div>`;
  return`<h1>الإشعارات</h1><div style="height:12px"></div>${st}<h2 class="h">الأقسام التي أتابعها</h2><div class="chips">${ch}</div><p class="mu" style="font-size:13px">الأخبار العاجلة تصلك دائماً بغض النظر عن الأقسام.</p><h2 class="h">آخر الإشعارات</h2>${L}`};
 function nInit(){addEventListener("scroll",()=>{const u=$("#up");if(u)u.hidden=scrollY<700},{passive:true});
  document.addEventListener("pointerdown",e=>{const p=$("#pk");if(p&&!p.parentNode.contains(e.target))p.classList.remove("open")});
- document.addEventListener("keydown",e=>{if(e.key==="Escape")shx()});setInterval(rxAll,3e5);
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"){shx();dr(0)}});setInterval(rxAll,3e5);
  if("Notification"in window&&Notification.permission==="granted"&&ls("non")!==0)regPS();swSeen()}
+/* ===== الصفحة الرئيسية: الأحدث ثم الأقدم ===== */
+let HP=1;
+const dayL=d=>{const t=new Date(d);if(isNaN(t))return"";const n=Math.round((new Date(new Date().toDateString())-new Date(t.toDateString()))/864e5);return n===0?"اليوم":n===1?"أمس":fmt(d)};
+function feedH(){const L=DATA.slice(4),S=L.slice(0,HP*PER);let o="",k=null;
+ S.forEach(a=>{const l=dayL(a.date);if(l!==k){if(k!==null)o+="</div>";o+=`<h3 class="dh">${l}</h3><div class="grid">`;k=l}o+=card(a)});if(k!==null)o+="</div>";
+ return o+(L.length>S.length?`<div style="text-align:center;margin-top:18px"><button class="btn o" onclick="HP++;hf()">عرض المزيد</button></div>`:"")}
+function hf(){const e=$("#hf");if(e)e.innerHTML=feedH()}
+/* ===== البحث من الهيدر ===== */
+let HT;
+function hsIn(v){clearTimeout(HT);HT=setTimeout(()=>{Q=v;if(location.hash==="#search")ds(v);else if(v.trim())location.hash="search"},250)}
+function hsGo(e){e.preventDefault();const q=$("#hq");Q=q.value;if(location.hash==="#search")ds(Q);else location.hash="search";q.blur()}
+function hsTog(){const o=document.body.classList.toggle("so");if(o)$("#hq").focus()}
+/* ===== القائمة الجانبية ===== */
+function dr(o){const d=$("#dw");if(!d)return;d.classList.toggle("open",!!o);$("#ov").classList.toggle("open",!!o);d.setAttribute("aria-hidden",!o);document.body.classList.toggle("lock",!!o);if(o)drawer()}
+function drawer(){const h="#"+(location.hash.slice(1)||"home"),n=nUn(),sv=saved().length,c=x=>x?`<i class="cn">${x.toLocaleString("ar-EG")}</i>`:"",
+ ln=(href,t,x)=>`<a class="dl${h===href?" on":""}" href="${href}"><span>${t}</span>${x||""}</a>`;
+ $("#dn").textContent=CFG.name;
+ $("#dl").innerHTML=ln("#home","الرئيسية")+ln("#notifications","الإشعارات",c(n))+ln("#saved","المحفوظات",c(sv))+ln("#archive","الأرشيف")+ln("#submit","أرسل مشاركتك")+`<div class="dsh">الأقسام</div>`+SEC.map((s,i)=>{const k=by(i).length;return k?ln("#s-"+i,esc(s),c(k)):""}).join("")}
+/* ===== الفوتر ===== */
+function foot(){const P=(h,x)=>`<a href="#${h}">${esc(PAGES[h]?PAGES[h][0]:x)}</a>`;
+ $("#ft").innerHTML=`<div class="wrap fg"><div class="fc fbr"><b>${esc(CFG.name)}</b><p>تشارككم لحظاتكم دائماً. أخبار القرية ومناسباتها وشخصياتها في مكان واحد.</p><div class="soc">${soc(0)}</div></div><div class="fc"><h4>الأقسام</h4>${MAIN.map(i=>`<a href="#s-${i}">${SEC[i]}</a>`).join("")}<a href="#archive">الأرشيف</a></div><div class="fc"><h4>عن المجلة</h4>${P("about","من نحن")}${P("editorial","هيئة التحرير")}${P("ads","أعلن معنا")}${P("privacy","سياسة الخصوصية")}</div><div class="fc"><h4>تواصل معنا</h4>${P("contact","تواصل معنا")}<a href="#submit">أرسل مشاركتك</a><a href="#notifications">الإشعارات</a></div></div><div class="wrap fcp">© ${new Date().getFullYear()} ${esc(CFG.name)}. جميع الحقوق محفوظة.</div>`}
+/* ===== العمل دون اتصال ===== */
+let OFF=!navigator.onLine;
+function offUI(){const b=$("#off");if(!b)return;b.hidden=!OFF;if(OFF){const t=ls("ct");b.textContent="أنت غير متصل بالإنترنت. تُعرض آخر نسخة محفوظة من المجلة"+(t?" (آخر تحديث: "+ago(t)+")":"")+"."}}
+function setOff(v){if(v===OFF)return;OFF=v;offUI();tst(v?"لا يوجد اتصال، يتم عرض آخر محتوى محفوظ":"عاد الاتصال، جارٍ تحديث المحتوى",4500);if(!v)refresh()}
+addEventListener("offline",()=>setOff(true));addEventListener("online",()=>setOff(false));
 let LOADED=0,SIG=ls("v")||"";
 const skel=()=>'<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
 let TKI=0,TKT;function tick(){const br=DATA.filter(a=>flag(a.breaking)||norm(a.section)===norm(SEC[1])),L=(br.length?br:DATA).slice(0,5);clearInterval(TKT);const show=()=>{const a=L[TKI++%L.length];$("#tk").innerHTML=a?`<b class="tl">${br.length?"عاجل":"جديد"}</b><a href="#a-${esc(a.id)}">${esc(a.title)}</a>`:"مرحباً بكم"};show();if(L.length>1)TKT=setInterval(show,4500)}
 function paint(note){tick();route();if(note)app.insertAdjacentHTML("afterbegin",`<div class="note">${note}</div>`)}
 async function sync(){
  if(!API_URL){DATA=SAMPLE;LOADED=1;return paint("لم يُضبط رابط الشيت بعد، تُعرض بيانات تجريبية.")}
- try{const j=await fetch(API_URL+"?type=boot").then(r=>r.json());if(!Array.isArray(j.arts))throw 0;
+ try{const rs=await fetch(API_URL+"?type=boot"),st=!!rs.headers.get("x-sr-offline");setOff(st);const j=await rs.json();if(!Array.isArray(j.arts))throw 0;if(!st)ls("ct",new Date().toISOString());offUI();
   if(LOADED&&j.v===SIG)return;
   j.arts.sort((a,b)=>new Date(b.date)-new Date(a.date));DATA=j.arts;SIG=j.v;LOADED=1;ls("cache",DATA);ls("v",j.v);nCheck();
   if(j.cfg&&!j.cfg.error){ls("cfg",j.cfg);applyCfg(j.cfg)}else paint()}
- catch(e){if(!LOADED){DATA=SAMPLE;LOADED=1;paint("تعذر الاتصال بالشيت، تُعرض بيانات تجريبية.")}}}
+ catch(e){if(!LOADED){DATA=SAMPLE;LOADED=1;paint("تعذر الاتصال بالشيت، تُعرض بيانات تجريبية.")}else setOff(true)}}
 async function refresh(){if(!API_URL||document.hidden||location.hash==="#submit")return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;
  try{const j=await fetch(API_URL+"?type=ver").then(r=>r.json());if(j.v&&j.v!==SIG){KEEP=1;await sync();KEEP=0}}catch(e){KEEP=0}}
-addEventListener("hashchange",()=>route());
-pi();{const c=ls("cache");if(c&&c.length){DATA=c;LOADED=1}}applyCfg(ls("cfg")||{});sync();rxAll();nInit();
+addEventListener("hashchange",()=>{dr(0);route()});
+pi();{const c=ls("cache");if(c&&c.length){DATA=c;LOADED=1}}applyCfg(ls("cfg")||{});sync();rxAll();nInit();offUI();if(OFF)setTimeout(()=>tst("لا يوجد اتصال، يتم عرض آخر محتوى محفوظ",4500),700);
 setInterval(refresh,60000);addEventListener("online",refresh);document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()});
 if("serviceWorker"in navigator){const had=!!navigator.serviceWorker.controller;navigator.serviceWorker.register("sw.js").then(r=>{setInterval(()=>r.update(),3600000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update()})}).catch(()=>{});navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had)location.reload()})}
 </script>
