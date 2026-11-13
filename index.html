@@ -166,6 +166,7 @@ footer .fc a{margin:0;color:var(--mut);font-weight:500}footer .fc a:hover{color:
 .fcp{border-top:1px solid var(--line);padding-top:14px;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));color:var(--mut);font-size:13px;text-align:center}
 @media(max-width:720px){.fg{grid-template-columns:1fr 1fr;gap:22px}.fbr{grid-column:1/-1}}
 @media print{.top,.off,.fab,.dw,.ov{display:none}}
+.nt.adm .ni{background:var(--pri);color:#fff}
 </style>
 </head>
 <body>
@@ -396,11 +397,25 @@ function nsh(){const a=curA();navigator.share({title:a.title,url:location.href.s
 let NT=ls("nt")||[];
 const nUn=()=>NT.filter(x=>!x.r).length,nSave=()=>{ls("nt",NT);nBadge()};
 function nBadge(){const b=$("#bell");if(!b)return;const n=nUn();b.innerHTML=ic("bell")+(n?`<i class="bd">${n>9?"9+":n.toLocaleString("ar-EG")}</i>`:"")}
-function swSeen(){const s=ls("ns");if(!s||!API_URL||!navigator.serviceWorker)return;navigator.serviceWorker.ready.then(r=>r.active&&r.active.postMessage({t:"seen",api:API_URL,seen:s})).catch(()=>{})}
+function swSeen(){const s=ls("ns");if(!s||!API_URL||!navigator.serviceWorker)return;navigator.serviceWorker.ready.then(r=>r.active&&r.active.postMessage({t:"seen",api:API_URL,seen:s,nseen:ls("nas")||undefined})).catch(()=>{})}
 function regPS(){navigator.serviceWorker&&navigator.serviceWorker.ready.then(r=>r.periodicSync&&r.periodicSync.register("sr-new",{minInterval:36e5})).catch(()=>{})}
-function nShow(a){const o={body:a.section||"",icon:"icon-192.png",badge:"icon-192.png",tag:"sr-"+a.id,dir:"rtl",lang:"ar",data:{url:"./"+a.url}};
+function nShow(a){const o={body:a.section||"",icon:"icon-192.png",badge:"icon-192.png",tag:"sr-"+a.id,dir:"rtl",lang:"ar",data:{url:/^https?:/i.test(a.url)?a.url:"./"+a.url}};
  (navigator.serviceWorker?navigator.serviceWorker.ready.then(r=>r.showNotification(a.title,o)):Promise.reject()).catch(()=>{try{new Notification(a.title,o)}catch(e){}})}
-function ntoast(h,m){const d=document.createElement("a");d.className="toast";d.href=h;d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),5000)}
+function ntoast(h,m){const d=document.createElement("a");d.className="toast";d.href=h;if(/^https?:/i.test(h)){d.target="_blank";d.rel="noopener"}d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),5000)}
+/* ===== إشعارات الإدارة ===== */
+const safeL=l=>/^https?:\/\//i.test(l||"")||/^#[\w-]+$/.test(l||"")?l:"";
+function ntItem(x){const lk=x.adm?safeL(x.l):"#a-"+x.id,ex=/^https?:/i.test(lk),pic=!x.adm&&img(x.i)?`<img src="${th(x.i,200)}" alt="" loading="lazy">`:`<span class="ni">${ic("bell")}</span>`;
+ return`<a class="item nt${x.r?"":" un"}${x.adm?" adm":""}" href="${esc(lk||"#notifications")}"${ex?' target="_blank" rel="noopener"':""} onclick="nRead('${esc(x.id)}')${lk?"":";rr();return false"}">${pic}<div><span class="tag">${esc(x.s||"")}</span><h3>${esc(x.t)}</h3>${x.b?`<p class="mu" style="margin:2px 0;font-size:14px">${esc(x.b)}</p>`:""}<small>${tm(x.d)}</small></div></a>`}
+async function nAdm(){if(!API_URL||OFF)return;try{const L=await fetch(API_URL+"?type=notifs").then(r=>r.json());if(!Array.isArray(L))return;
+ const sn=ls("nas"),first=!sn,seen=new Set((sn||[]).map(String)),fresh=L.filter(x=>!seen.has(String(x.id)));if(!first&&!fresh.length)return;
+ ls("nas",[...seen,...fresh.map(x=>String(x.id))].slice(-300));
+ const items=fresh.filter(x=>!first||Date.now()-new Date(x.d)<2592e5);   /* أول زيارة: آخر 3 أيام فقط وتُعتبر مقروءة */
+ if(!items.length){swSeen();return}
+ NT=[...items.map(x=>({id:"m"+x.id,t:x.t,b:x.b,l:x.l,d:x.d,s:"من الإدارة",adm:1,r:0})),...NT].sort((a,b)=>new Date(b.d)-new Date(a.d)).slice(0,60);nSave();swSeen();
+ if(location.hash==="#notifications")rr();if(first)return;
+ const one=items.length===1,x=items[0],lk=safeL(x.l)||"#notifications";
+ if(document.hidden&&"Notification"in window&&Notification.permission==="granted"&&ls("non")!==0)nShow(one?{id:"m"+x.id,title:x.t,section:x.b,url:lk}:{id:"multi-m",title:"مناسبات صراوة",section:items.length.toLocaleString("ar-EG")+" إشعارات جديدة",url:"#notifications"});
+ else ntoast(one?lk:"#notifications",one?x.t:items.length.toLocaleString("ar-EG")+" إشعارات جديدة")}catch(e){}}
 function nCheck(){if(!DATA.length)return;const sn=ls("ns");
  if(!sn){ls("ns",DATA.map(a=>String(a.id)));swSeen();return}   /* أول زيارة: لا نُغرق المستخدم بأخبار قديمة */
  const seen=new Set(sn.map(String)),nw=DATA.filter(a=>!seen.has(String(a.id)));if(!nw.length)return;
@@ -419,11 +434,11 @@ function nClr(){NT=[];nSave();rr()}
 view.notifications=()=>{const sup="Notification"in window,pm=sup?Notification.permission:"",on=pm==="granted"&&ls("non")!==0,fl=ls("nsec")||[];
  const st=!sup?`<div class="note">متصفحك لا يدعم إشعارات الويب. على آيفون: أضف التطبيق إلى الشاشة الرئيسية ثم افتحه من هناك لتفعيل الإشعارات.</div>`:pm==="denied"?`<div class="note er">الإشعارات محظورة. اسمح بها من إعدادات الموقع في المتصفح ثم أعد المحاولة.</div>`:on?`<div class="note ok">إشعارات المتصفح مفعّلة. <button class="btn o" onclick="nOff()">إيقاف</button></div>`:`<div class="note"><b>لا يفوتك خبر</b><br>فعّل الإشعارات لتصلك الأخبار الجديدة فور نشرها.<br><button class="btn g" onclick="nOn()">تفعيل الإشعارات</button></div>`;
  const ch=`<button class="chip${fl.length?"":" on"}" onclick="nSec(-1)">كل الأقسام</button>`+[0,1,2,3,5,6,7,8,18,22,26,32].map(i=>`<button class="chip${fl.includes(norm(SEC[i]))?" on":""}" onclick="nSec(${i})">${SEC[i]}</button>`).join("");
- const L=NT.length?`<div class="bar"><button class="btn o" onclick="nAll()">تعليم الكل كمقروء</button><button class="btn o" onclick="nClr()">مسح الكل</button></div><div class="nl">${NT.map(x=>`<a class="item nt${x.r?"":" un"}" href="#a-${esc(x.id)}" onclick="nRead('${esc(x.id)}')">${img(x.i)?`<img src="${th(x.i,200)}" alt="" loading="lazy">`:`<span class="ni">${ic("bell")}</span>`}<div><span class="tag">${esc(x.s)}</span><h3>${esc(x.t)}</h3><small>${tm(x.d)}</small></div></a>`).join("")}</div>`:`<div class="note">لا توجد إشعارات بعد. ستظهر هنا الأخبار الجديدة فور نشرها.</div>`;
+ const L=NT.length?`<div class="bar"><button class="btn o" onclick="nAll()">تعليم الكل كمقروء</button><button class="btn o" onclick="nClr()">مسح الكل</button></div><div class="nl">${NT.map(ntItem).join("")}</div>`:`<div class="note">لا توجد إشعارات بعد. ستظهر هنا الأخبار الجديدة فور نشرها.</div>`;
  return`<h1>الإشعارات</h1><div style="height:12px"></div>${st}<h2 class="h">الأقسام التي أتابعها</h2><div class="chips">${ch}</div><p class="mu" style="font-size:13px">الأخبار العاجلة تصلك دائماً بغض النظر عن الأقسام.</p><h2 class="h">آخر الإشعارات</h2>${L}`};
 function nInit(){addEventListener("scroll",()=>{const u=$("#up");if(u)u.hidden=scrollY<700},{passive:true});
  document.addEventListener("pointerdown",e=>{const p=$("#pk");if(p&&!p.parentNode.contains(e.target))p.classList.remove("open")});
- document.addEventListener("keydown",e=>{if(e.key==="Escape"){shx();dr(0)}});setInterval(rxAll,3e5);
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"){shx();dr(0)}});setInterval(rxAll,3e5);nAdm();setInterval(nAdm,6e4);addEventListener("online",nAdm);document.addEventListener("visibilitychange",()=>{if(!document.hidden)nAdm()});
  if("Notification"in window&&Notification.permission==="granted"&&ls("non")!==0)regPS();swSeen()}
 /* ===== الصفحة الرئيسية: الأحدث ثم الأقدم ===== */
 let HP=1;
