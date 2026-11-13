@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>لوحة تحكم مناسبات صراوة</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Noto+Naskh+Arabic:wght@500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f3e8;--card:#fff;--ink:#2a2410;--pri:#9a6208;--acc:#e8ad1c;--grn:#3f7d2c;--line:#e6dcb8;--red:#b3261e;--mut:#7a6f4c}
 *{box-sizing:border-box}
@@ -49,6 +49,20 @@ button.g{background:var(--grn);color:#fff}button.r{background:var(--red);color:#
 .hint{color:var(--mut);font-size:13px}
 .msg{position:fixed;bottom:16px;right:16px;left:16px;max-width:420px;margin:auto;background:#222;color:#fff;padding:10px;border-radius:8px;text-align:center;z-index:99}
 @media(max-width:860px){.shell{display:block}aside{position:static;height:auto;display:flex;overflow-x:auto;padding:6px;gap:4px;border-left:0;border-bottom:1px solid var(--line)}aside h4{display:none}aside button{white-space:nowrap;width:auto;gap:6px}.split,.split2{grid-template-columns:1fr}.pvw{position:static;max-height:none}}
+
+body{font-family:"IBM Plex Sans Arabic",Cairo,Tahoma,sans-serif}
+h1,h2,h3,button{font-family:Cairo,"IBM Plex Sans Arabic",sans-serif}
+button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 16px;border-radius:10px;font-weight:700;box-shadow:0 1px 2px #0002;transition:transform .15s,box-shadow .15s,filter .15s,background .15s}
+button:hover{filter:brightness(1.06);box-shadow:0 4px 10px #0002;transform:translateY(-1px)}button:active{transform:none;box-shadow:none}
+button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}button:disabled{opacity:.55;pointer-events:none}
+button.o{box-shadow:none}button.o:hover{background:#f5efd9;border-color:var(--acc);filter:none}
+aside button{box-shadow:none;transform:none!important;min-height:0;font-weight:600;filter:none}
+header .lk{min-height:0;box-shadow:none;padding:4px 12px}
+.tb{gap:6px;padding:8px}.tb button,.tb select{min-height:34px;font-size:13px;font-weight:600;border-radius:8px;box-shadow:none}.tb button:hover{background:var(--acc);border-color:var(--acc);transform:none}
+.row>button.s,.row .s>button{min-width:92px}
+.msg{font-weight:600;box-shadow:0 6px 20px #0004}.msg.ok{background:#2e6b1f}.msg.err{background:#a62a22}
+#busy{position:fixed;inset:0;background:#0007;display:grid;place-items:center;z-index:98}#busy div{background:#fff;padding:14px 24px;border-radius:14px;font-weight:700;box-shadow:0 10px 30px #0005;display:flex;gap:10px;align-items:center}
+.sp{width:1.1em;height:1.1em;border:3px solid var(--pri);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -66,7 +80,8 @@ const POSL={top:"أعلى الصفحة",mid:"بين الأقسام",article:"د�
 const RL={owner:"مالك",chief:"رئيس تحرير",editor:"محرر",moderator:"مشرف",ads:"مسؤول إعلانات"};
 const TB={owner:["arts","cmts","inbox","dash","ads","users","log","set","home","pages"],chief:["arts","cmts","inbox","dash"],editor:["arts"],moderator:["cmts","inbox"],ads:["ads"]};
 const NAVG=[["تحرير",[["arts","المقالات"],["cmts","الردود والتعليقات"],["inbox","مشاركات الجمهور"]]],["الإدارة",[["dash","المؤشرات"],["ads","الإعلانات"],["users","المستخدمون"],["log","سجل العمليات"]]],["الشكل والمحتوى",[["set","الإعدادات والألوان"],["home","الرئيسية والقوائم"],["pages","الصفحات والنصوص"]]]];
-let S=null,ED=null,UE=null,TAB="arts",TK=sessionStorage.getItem("adm_t")||"",SIG="",QA="",FA="",RG=null;
+let S=null,ED=null,UE=null,TAB="arts",TK=sessionStorage.getItem("adm_t")||"",VER="",QA="",FA="",RG=null,PEND=null,PT;
+function flush(){clearTimeout(PT);if(PEND){const f=PEND;PEND=null;f()}}
 const TD=()=>new Date().toISOString().slice(0,10);
 /* ---------- تنظيف النص المنسق ---------- */
 function clean(h){const d=new DOMParser().parseFromString("<body>"+h,"text/html").body,OK="P BR B STRONG I EM U H2 H3 UL OL LI A BLOCKQUOTE SPAN DIV FONT HR".split(" ");
@@ -81,21 +96,26 @@ const rich=s=>/<[a-z][\s\S]*>/i.test(String(s??""))?clean(String(s)):String(s??"
 const yt=u=>{const m=String(u||"").match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/);return m?`<div style="aspect-ratio:16/9;margin:10px 0"><iframe src="https://www.youtube-nocookie.com/embed/${m[1]}" style="width:100%;height:100%;border:0;border-radius:8px" allowfullscreen></iframe></div>`:""};
 const https=u=>/^https:\/\//.test(u||"");
 /* ---------- الاتصال ---------- */
-const msg=t=>{const d=document.createElement("div");d.className="msg";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)};
+const msg=(t,k)=>{const d=document.createElement("div");d.className="msg "+(k||"");d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),k==="err"?4500:2600)};
 async function api(action,d={}){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({token:TK,action,...d})});const j=await r.json();if(j.error==="expired"){sessionStorage.removeItem("adm_t");TK="";login("انتهت الجلسة، سجّل الدخول من جديد");throw new Error("انتهت الجلسة")}if(j.error)throw new Error(j.error);return j}
-const wrap=async(f,ok)=>{try{await f();if(ok)msg(ok)}catch(e){msg(e.message)}};
+let BZ=0;const busy=(on,t)=>{BZ=Math.max(0,BZ+(on?1:-1));let o=$("#busy");if(BZ>0){if(!o){o=document.createElement("div");o.id="busy";document.body.appendChild(o)}o.innerHTML=`<div><span class="sp"></span>${esc(t||"يرجى الانتظار...")}</div>`}else if(o)o.remove()};
+const wrap=async(f,ok,t)=>{busy(1,t);try{await f();if(ok)msg(ok,"ok")}catch(e){msg("تعذّر التنفيذ: "+e.message,"err")}finally{busy(0)}};
+const AN=(n,o)=>n===1?o[0]:n===2?o[1]:n.toLocaleString("ar-EG")+" "+(n<=10?o[2]:o[3]);
+const ago=d=>{const t=new Date(d);if(isNaN(t))return"";if(String(d).length<=10)return String(d);const m=Math.floor((Date.now()-t)/6e4);if(m<1)return"الآن";if(m<60)return"منذ "+AN(m,["دقيقة","دقيقتين","دقائق","دقيقة"]);const h=Math.floor(m/60);if(h<24)return"منذ "+AN(h,["ساعة","ساعتين","ساعات","ساعة"]);const D=Math.floor(h/24);if(D<7)return"منذ "+AN(D,["يوم","يومين","أيام","يوماً"]);if(D<30)return"منذ "+AN(Math.floor(D/7),["أسبوع","أسبوعين","أسابيع","أسبوعاً"]);return t.toLocaleDateString("ar-EG",{dateStyle:"medium"})};
+const agoA=d=>{const t=new Date(d);return isNaN(t)?"":t>Date.now()+6e4?"مجدول: "+t.toLocaleString("ar-EG",{dateStyle:"medium",timeStyle:"short"}):ago(d)};
+const loc=d=>{const t=new Date(d);if(isNaN(t))return"";const p=n=>String(n).padStart(2,"0");return`${t.getFullYear()}-${p(t.getMonth()+1)}-${p(t.getDate())}T${p(t.getHours())}:${p(t.getMinutes())}`};
 const gp=(o,p)=>p.split(".").reduce((x,k)=>x?.[k],o);
 function sp(o,p,v){const k=p.split(".");let t=o;k.slice(0,-1).forEach(x=>t=t[x]??={});t[k[k.length-1]]=v}
 /* ---------- الحقول ---------- */
-function F(l,p,t,o={}){const sc=o.a?"a":o.u?"u":"c",v=gp(sc==="a"?ED:sc==="u"?UE:S.cfg,p),at=`data-p="${p}" data-sc="${sc}"${o.y?' data-y="1"':""}${o.ln?' data-l="1"':""}`;
+function F(l,p,t,o={}){const sc=o.a?"a":o.u?"u":"c",v=gp(sc==="a"?ED:sc==="u"?UE:S.cfg,p),at=`data-p="${p}" data-sc="${sc}"${o.y?' data-y="1"':""}${o.ln?' data-l="1"':""}${o.dt?' data-dt="1"':""}`;
  if(t==="chk")return`<label class="row"><span class="s"><input type="checkbox" ${at} ${(o.y?v==="نعم":(v===undefined||+v!==0&&v!==""))?"checked":""}></span><span>${l}</span></label>`;
  if(t==="area")return`<label>${l}</label><textarea rows="${o.r||4}" ${at}>${esc(o.ln?(v||[]).join("\n"):v)}</textarea>`;
  if(t==="sel")return`<label>${l}</label><select ${at}>${o.opts.map(([k,x])=>`<option value="${esc(k)}"${String(v)===String(k)?" selected":""}>${esc(x)}</option>`).join("")}</select>`;
- const inp=`<input type="${t||"text"}" ${at}${o.dir?' dir="ltr"':""} value="${esc(t==="date"?String(v||"").slice(0,10):v)}"${o.dis?" disabled":""}>`;
+ const inp=`<input type="${t||"text"}" ${at}${o.dir?' dir="ltr"':""} value="${esc(t==="date"?String(v||"").slice(0,10):t==="datetime-local"?loc(v):v)}"${o.dis?" disabled":""}>`;
  return`<label>${l}</label>`+(o.up?`<div class="row">${inp}<span class="s"><button type="button" class="o" onclick="up('${p}','${sc}')">رفع صورة</button></span></div>`:inp)}
 document.addEventListener("input",e=>{const t=e.target,r=t.closest&&t.closest(".rte");
- if(r){sp(r.dataset.o==="a"?ED:S.cfg,r.dataset.r,clean(r.innerHTML));pv();return}
- const p=t.dataset&&t.dataset.p;if(!p)return;let v=t.value;if(t.type==="checkbox")v=t.dataset.y?(t.checked?"نعم":""):(t.checked?1:0);if(t.dataset.l)v=v.split("\n").map(x=>x.trim()).filter(Boolean);
+ if(r){PEND=()=>{sp(r.dataset.o==="a"?ED:S.cfg,r.dataset.r,clean(r.innerHTML));pv()};clearTimeout(PT);PT=setTimeout(flush,220);return}
+ const p=t.dataset&&t.dataset.p;if(!p)return;let v=t.value;if(t.type==="checkbox")v=t.dataset.y?(t.checked?"نعم":""):(t.checked?1:0);if(t.dataset.dt)v=v?new Date(v).toISOString():"";if(t.dataset.l)v=v.split("\n").map(x=>x.trim()).filter(Boolean);
  sp(t.dataset.sc==="a"?ED:t.dataset.sc==="u"?UE:S.cfg,p,v);pv()});
 document.addEventListener("selectionchange",()=>{const s=getSelection();if(!s.rangeCount)return;const n=s.anchorNode,el=n&&(n.nodeType===1?n:n.parentElement);if(el&&el.closest&&el.closest(".rte"))RG=s.getRangeAt(0).cloneRange()});
 document.addEventListener("paste",e=>{const r=e.target.closest&&e.target.closest(".rte");if(!r)return;e.preventDefault();document.execCommand("insertText",false,e.clipboardData.getData("text/plain"))});
@@ -104,9 +124,9 @@ const lnk=()=>{const u=prompt("الرابط (يبدأ بـ https://)");if(u)cmd(
 const TBH=`<div class="tb" onmousedown="if(event.target.tagName!=='SELECT')event.preventDefault()"><button type="button" onclick="cmd('bold')"><b>B</b></button><button type="button" onclick="cmd('italic')"><i>I</i></button><button type="button" onclick="cmd('underline')"><u>U</u></button><select onchange="cmd('fontSize',this.value);this.selectedIndex=0"><option>الحجم</option><option value="2">صغير</option><option value="3">عادي</option><option value="5">كبير</option><option value="6">كبير جداً</option><option value="7">ضخم</option></select><button type="button" onclick="cmd('formatBlock','h2')">عنوان</button><button type="button" onclick="cmd('formatBlock','h3')">فرعي</button><button type="button" onclick="cmd('formatBlock','p')">فقرة</button><button type="button" onclick="cmd('formatBlock','blockquote')">اقتباس</button><button type="button" onclick="cmd('insertUnorderedList')">• قائمة</button><button type="button" onclick="cmd('insertOrderedList')">1. قائمة</button><button type="button" onclick="cmd('justifyRight')">يمين</button><button type="button" onclick="cmd('justifyCenter')">وسط</button><button type="button" onclick="cmd('justifyLeft')">يسار</button><button type="button" onclick="lnk()">رابط</button><button type="button" onclick="cmd('removeFormat')">مسح</button></div>`;
 const RTE=(p,o)=>`${TBH}<div class="rte rich" contenteditable="true" data-r="${p}" data-o="${o}">${rich(gp(o==="a"?ED:S.cfg,p))}</div>`;
 function up(p,o){const i=document.createElement("input");i.type="file";i.accept="image/*";i.onchange=()=>{const f=i.files[0];if(!f)return;const im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);
- wrap(async()=>{msg("جارٍ الرفع...");const r=await api("upload",{name:f.name.replace(/\.\w+$/,"")+".jpg",data:c.toDataURL("image/jpeg",.82).split(",")[1]});sp(o==="a"?ED:S.cfg,p,r.url);render()},"تم رفع الصورة")};im.src=URL.createObjectURL(f)};i.click()}
+ wrap(async()=>{const r=await api("upload",{name:f.name.replace(/\.\w+$/,"")+".jpg",data:c.toDataURL("image/jpeg",.82).split(",")[1]});sp(o==="a"?ED:S.cfg,p,r.url);render()},"تم رفع الصورة بنجاح","جارٍ رفع الصورة... يرجى الانتظار")};im.src=URL.createObjectURL(f)};i.click()}
 /* ---------- المعاينات ---------- */
-const aprev=a=>`<div class="pa"><span class="tg">${esc(a.section)}</span><h1>${esc(a.title)||"عنوان المقال"}</h1>${a.subtitle?`<h3>${esc(a.subtitle)}</h3>`:""}<div class="mt">${esc(a.author||"")} • ${esc(String(a.date||"").slice(0,10))}</div>${https(a.img)?`<img src="${esc(a.img)}" alt="">`:""}<div class="rich">${rich(a.body)}</div>${yt(a.video)}</div>`;
+const aprev=a=>`<div class="pa"><span class="tg">${esc(a.section)}</span><h1>${esc(a.title)||"عنوان المقال"}</h1>${a.subtitle?`<h3>${esc(a.subtitle)}</h3>`:""}<div class="mt">${esc(a.author||"")} • ${agoA(a.date)}</div>${https(a.img)?`<img src="${esc(a.img)}" alt="">`:""}<div class="rich">${rich(a.body)}</div>${yt(a.video)}</div>`;
 const adp=(a,i)=>{const td=TD(),on=+a.active!==0&&(!a.start||String(a.start).slice(0,10)<=td)&&(!a.end||String(a.end).slice(0,10)>=td),m=a.media||"";let b="";
  if(a.kind==="video")b=yt(m)||(https(m)?`<video src="${esc(m)}" controls muted style="width:100%"></video>`:"");
  else if(a.kind==="image")b=https(m)?`<img src="${esc(m)}" style="width:100%;border-radius:8px">`:"";
@@ -127,11 +147,11 @@ const ad=(p,o)=>{gp(S.cfg,p).push(o);render()};
 const UD=p=>i=>`<span class="s"><button class="o" onclick="mv('${p}',${i},-1)">↑</button> <button class="o" onclick="mv('${p}',${i},1)">↓</button></span>`;
 const SV=`<p><button class="g" onclick="saveCfg()">حفظ التغييرات ونشرها</button></p><p class="hint">تظهر التغييرات للزوار تلقائياً خلال دقيقة.</p>`;
 const stBtn=(sh,row,ok)=>`<button class="g s" onclick="st('${sh}',${row},'${ok}')">${ok}</button><button class="o s" onclick="st('${sh}',${row},'مرفوض')">رفض</button><button class="r s" onclick="dr('${sh}',${row})">حذف</button>`;
-function listA(r){const n=norm(QA),ed=S.role==="editor",h=S.arts.map((a,i)=>[a,i]).filter(([a])=>(!FA||a.status===FA)&&(!n||norm(a.title+" "+a.section+" "+a.author).includes(n))).sort((x,y)=>String(y[0].date).localeCompare(String(x[0].date)))
- .map(([a,i])=>`<div class="card"><div class="row"><div><b>${esc(a.title)}</b><br><small class="hint">${esc(a.section)} • ${esc(String(a.date).slice(0,10))} • ${esc(a.author||"")}</small></div><span class="s"><span class="bd ${a.status==="منشور"?"ok":""}">${esc(a.status)}</span></span></div><p class="row"><button class="o s" onclick="ED={...S.arts[${i}]};render()">تعديل</button><button class="o s" onclick="dupA(${i})">نسخ</button>${ed?"":`<button class="g s" onclick="pubA(${i})">${a.status==="منشور"?"إلغاء النشر":"نشر"}</button><button class="r s" onclick="delA(${i})">حذف</button>`}</p></div>`).join("")||'<p class="hint">لا توجد مقالات مطابقة.</p>';
+function listA(r){const n=norm(QA),ed=S.role==="editor",h=S.arts.map((a,i)=>[a,i]).filter(([a])=>(!FA||a.status===FA)&&(!n||norm(a.title+" "+a.section+" "+a.author).includes(n))).sort((x,y)=>new Date(y[0].date)-new Date(x[0].date))
+ .map(([a,i])=>`<div class="card"><div class="row"><div><b>${esc(a.title)}</b><br><small class="hint">${esc(a.section)} • ${agoA(a.date)} • ${esc(a.author||"")}</small></div><span class="s"><span class="bd ${a.status==="منشور"?"ok":""}">${esc(a.status)}</span></span></div><p class="row"><button class="o s" onclick="ED={...S.arts[${i}]};render()">تعديل</button><button class="o s" onclick="dupA(${i})">نسخ</button>${ed?"":`<button class="g s" onclick="pubA(${i})">${a.status==="منشور"?"إلغاء النشر":"نشر"}</button><button class="r s" onclick="delA(${i})">حذف</button>`}</p></div>`).join("")||'<p class="hint">لا توجد مقالات مطابقة.</p>';
  if(r)return h;$("#la").innerHTML=h}
 const V={
-arts:()=>ED?split(`<div class="card"><datalist id="sl">${SEC.map(s=>`<option>${s}</option>`).join("")}</datalist>${F("العنوان","title","text",{a:1})}${F("عنوان فرعي","subtitle","text",{a:1})}<label>القسم</label><input list="sl" data-p="section" data-sc="a" value="${esc(ED.section)}"><label>النص</label>${RTE("body","a")}${F("رابط الصورة","img","text",{a:1,up:1,dir:1})}${F("رابط فيديو يوتيوب","video","text",{a:1,dir:1})}${F("روابط صور إضافية (مفصولة بمسافة)","gallery","text",{a:1,dir:1})}<div class="row">${F("تاريخ النشر (تاريخ مستقبلي = جدولة)","date","date",{a:1})}${S.role==="editor"?"":F("الحالة","status","sel",{a:1,opts:[["مسودة","مسودة"],["منشور","منشور"]]})}</div><div class="row">${F("الكاتب","author","text",{a:1})}${F("المحرر","editor","text",{a:1})}</div>${F("الوسوم (بفاصلة)","tags","text",{a:1})}<div class="row">${F("تاريخ المناسبة","eventdate","date",{a:1})}${F("المكان","place","text",{a:1})}</div>${S.role==="editor"?'<p class="hint">يحفظ المقال كمسودة ويراجعه رئيس التحرير وينشره.</p>':F("خبر عاجل","breaking","chk",{a:1,y:1})+F("اختيار هيئة التحرير","pick","chk",{a:1,y:1})}<p class="row"><button class="g s" onclick="saveA()">حفظ</button><button class="o s" onclick="ED=null;render()">رجوع</button></p></div>`,"arts")
+arts:()=>ED?split(`<div class="card"><datalist id="sl">${SEC.map(s=>`<option>${s}</option>`).join("")}</datalist>${F("العنوان","title","text",{a:1})}${F("عنوان فرعي","subtitle","text",{a:1})}<label>القسم</label><input list="sl" data-p="section" data-sc="a" value="${esc(ED.section)}"><label>النص</label>${RTE("body","a")}${F("رابط الصورة","img","text",{a:1,up:1,dir:1})}${F("رابط فيديو يوتيوب","video","text",{a:1,dir:1})}${F("روابط صور إضافية (مفصولة بمسافة)","gallery","text",{a:1,dir:1})}<div class="row">${F("وقت النشر (وقت مستقبلي = جدولة)","date","datetime-local",{a:1,dt:1})}<span class="s"><button type="button" class="o" onclick="ED.date=new Date().toISOString();render()">الآن</button></span>${S.role==="editor"?"":F("الحالة","status","sel",{a:1,opts:[["مسودة","مسودة"],["منشور","منشور"]]})}</div><div class="row">${F("الكاتب","author","text",{a:1})}${F("المحرر","editor","text",{a:1})}</div>${F("الوسوم (بفاصلة)","tags","text",{a:1})}<div class="row">${F("تاريخ المناسبة","eventdate","date",{a:1})}${F("المكان","place","text",{a:1})}</div>${S.role==="editor"?'<p class="hint">يحفظ المقال كمسودة ويراجعه رئيس التحرير وينشره.</p>':F("خبر عاجل","breaking","chk",{a:1,y:1})+F("اختيار هيئة التحرير","pick","chk",{a:1,y:1})}<p class="row"><button class="g s" onclick="saveA()">حفظ</button><button class="o s" onclick="ED=null;render()">رجوع</button></p></div>`,"arts")
  :`<div class="row" style="margin-bottom:12px"><input placeholder="بحث في المقالات" value="${esc(QA)}" oninput="QA=this.value;listA()"><select onchange="FA=this.value;listA()"><option value="">كل الحالات</option><option${FA==="منشور"?" selected":""}>منشور</option><option${FA==="مسودة"?" selected":""}>مسودة</option></select><span class="s"><button class="g" onclick="newA()">+ مقال جديد</button></span></div><div id="la">${listA(1)}</div>`,
 cmts:()=>S.coms.length?[...S.coms].reverse().map(({row,r})=>{const a=S.arts.find(x=>String(x.id)===String(r[0]));return`<div class="card"><div class="split2"><div><small class="hint">${esc(String(r[1]).slice(0,10))} • ${esc(a?a.title:"مقال "+r[0])} • <span class="bd ${r[6]==="معتمد"?"ok":""}">${esc(r[6])}</span></small><br><b>${esc(r[3])}</b><p>${esc(r[5])}</p><label>رد المجلة</label><textarea rows="2" oninput="rp(${row},this.value)" id="rt${row}">${esc(r[7]||"")}</textarea><p class="row"><button class="s" onclick="saveR(${row})">حفظ الرد</button>${stBtn("التعليقات",row,"معتمد")}</p></div><div class="pvw sm"><div class="pvh">كما سيظهر في الموقع</div><div class="cm"><b>${esc(r[3])}</b><p style="margin:4px 0">${esc(r[5])}</p><div class="rep" id="rv${row}">${r[7]?"رد المجلة: "+esc(r[7]):""}</div></div></div></div></div>`}).join(""):'<p class="hint">لا توجد تعليقات.</p>',
 inbox:()=>S.subs.length?[...S.subs].reverse().map(({row,r})=>`<div class="card"><small class="hint">${esc(String(r[1]).slice(0,10))} • ${esc(r[2])} • <span class="bd ${r[6]==="مقبول"?"ok":""}">${esc(r[6])}</span> • مرجع: ${esc(r[0])}</small><br><b>${esc(r[3])}</b> <span dir="ltr">${esc(r[4])}</span><p>${esc(r[5])}</p><p class="row">${S.role==="moderator"?"":`<button class="s" onclick="toA(${row})">تحويل إلى مقال</button>`}${stBtn("المشاركات",row,"مقبول")}</p></div>`).join(""):'<p class="hint">لا توجد مشاركات.</p>',
@@ -145,33 +165,33 @@ home:()=>{const c=S.cfg,u=UD("home"),n=UD("nav");return split(`<div class="card"
 pages:()=>{const c=S.cfg;return[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].map(([k,x])=>`<div class="card"><b>صفحة: ${x}</b><div class="split2"><div>${F("العنوان","pages."+k+".0")}<label>المحتوى (فقرات وتنسيق وأحجام خط)</label>${RTE("pages."+k+".1","c")}</div><div class="pvw sm"><div class="pvh">المعاينة المباشرة</div><div id="pp-${k}"></div></div></div></div>`).join("")+`<div class="card"><b>هيئة التحرير</b>${c.editorial.map((x,i)=>`<div class="row">${F("المنصب","editorial."+i+".0")}${F("الاسم","editorial."+i+".1")}<span class="s"><button class="r" onclick="rm('editorial',${i})">حذف</button></span></div>`).join("")}<button class="o" onclick="ad('editorial',['منصب','الاسم'])">+ إضافة</button></div><div class="card"><b>استطلاع الرأي</b>${F("السؤال","poll.q")}${F("الخيارات (كل خيار في سطر)","poll.o","area",{ln:1})}</div>`+SV}};
 /* ---------- العمليات ---------- */
 const go2=k=>{TAB=k;ED=null;UE=null;render()};
-const newA=()=>{ED={status:"مسودة",date:TD(),author:S.name,body:""};render()};
+const newA=()=>{ED={status:"مسودة",date:new Date().toISOString(),author:S.name,body:""};render()};
 const dupA=i=>{ED={...S.arts[i],id:"",title:S.arts[i].title+" (نسخة)",status:"مسودة",fb:""};render()};
 const pubA=i=>wrap(async()=>{await api("saveArticle",{a:{id:S.arts[i].id,status:S.arts[i].status==="منشور"?"مسودة":"منشور"}});await load()},"تم");
 const delA=i=>confirm("حذف المقال؟")&&wrap(async()=>{await api("delArticle",{id:S.arts[i].id});await load()},"تم الحذف");
-const saveA=()=>wrap(async()=>{if(!ED.title)throw new Error("اكتب العنوان");await api("saveArticle",{a:ED});ED=null;await load()},"تم حفظ المقال");
-const saveCfg=()=>wrap(()=>api("saveConfig",{cfg:S.cfg}),"تم الحفظ");
+const saveA=()=>wrap(async()=>{flush();if(!ED.title)throw new Error("اكتب العنوان");if(!ED.date)ED.date=new Date().toISOString();await api("saveArticle",{a:ED});ED=null;await load()},"تم حفظ المقال بنجاح","جارٍ حفظ المقال... يرجى الانتظار");
+const saveCfg=()=>wrap(()=>{flush();return api("saveConfig",{cfg:S.cfg})},"تم الحفظ والنشر بنجاح","جارٍ حفظ الإعدادات... يرجى الانتظار");
 const st=(sheet,row,status)=>wrap(async()=>{await api("setStatus",{sheet,row,status});await load()},"تم");
 const dr=(sheet,row)=>confirm("حذف نهائي؟")&&wrap(async()=>{await api("delRow",{sheet,row});await load()},"تم الحذف");
 const rp=(row,v)=>{$("#rv"+row).textContent=v?"رد المجلة: "+v:""};
 const saveR=row=>wrap(async()=>{await api("replyComment",{row,text:$("#rt"+row).value});await load()},"تم حفظ الرد");
-const toA=row=>{const r=S.subs.find(x=>x.row===row).r;ED={status:"مسودة",date:TD(),author:S.name,title:String(r[5]).slice(0,60),body:String(r[5]).split(/\n+/).map(p=>`<p>${esc(p)}</p>`).join(""),section:/مناسبة|زفاف|خطوبة/.test(r[2])?"مناسبات صراوة":""};go2b()};
+const toA=row=>{const r=S.subs.find(x=>x.row===row).r;ED={status:"مسودة",date:new Date().toISOString(),author:S.name,title:String(r[5]).slice(0,60),body:String(r[5]).split(/\n+/).map(p=>`<p>${esc(p)}</p>`).join(""),section:/مناسبة|زفاف|خطوبة/.test(r[2])?"مناسبات صراوة":""};go2b()};
 const go2b=()=>{TAB="arts";render()};
 const saveU=()=>wrap(async()=>{await api("saveUser",{u:UE.u,name:UE.name,role:UE.role,pass:UE.pass,active:UE.active==="نعم"?"نعم":"لا"});UE=null;await load()},"تم حفظ المستخدم");
 const delU=i=>confirm("حذف المستخدم؟")&&wrap(async()=>{await api("delUser",{u:S.users[i].u});await load()},"تم الحذف");
 /* ---------- العرض ---------- */
-function render(){const T=TB[S.role]||[];if(!T.includes(TAB))TAB=T[0];
+function render(){flush();const T=TB[S.role]||[];if(!T.includes(TAB))TAB=T[0];
  const bd={cmts:S.coms.filter(x=>x.r[6]==="جديد").length,inbox:S.subs.filter(x=>x.r[6]==="جديد").length};
  $("#app").innerHTML=`<div class="shell"><aside>${NAVG.map(([g,L])=>{const l=L.filter(x=>T.includes(x[0]));return l.length?`<h4>${g}</h4>`+l.map(([k,x])=>`<button class="${TAB===k?"on":""}" onclick="go2('${k}')">${x}${bd[k]?`<i>${bd[k]}</i>`:""}</button>`).join(""):""}).join("")}</aside><main>${V[TAB]()}</main></div>`;
  $("#me").innerHTML=esc(S.name)+" ("+RL[S.role]+") <button class='lk' onclick='logout()'>خروج</button>";pv()}
 function login(m){$("#app").innerHTML=`<div class="lg"><div class="card"><h2>تسجيل الدخول</h2>${m?`<p class="er">${esc(m)}</p>`:""}<label>اسم المستخدم</label><input id="lm" dir="ltr" autocapitalize="off" value="${esc(localStorage.getItem("adm_u")||"")}"><label>كلمة السر</label><input id="lk" type="password" onkeydown="if(event.key==='Enter')go()"><p></p><button class="g" style="width:100%" onclick="go()">دخول</button></div></div>`;$("#me").textContent=""}
-async function go(){const u=$("#lm").value.trim();localStorage.setItem("adm_u",u);try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({action:"login",user:u,pass:$("#lk").value})}),j=await r.json();if(j.error)throw new Error(j.error);TK=j.token;sessionStorage.setItem("adm_t",TK);await load()}catch(e){login(e.message)}}
+async function go(){const bt=document.querySelector(".lg button");if(bt){bt.disabled=true;bt.textContent="يرجى الانتظار..."}const u=$("#lm").value.trim();localStorage.setItem("adm_u",u);try{const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({action:"login",user:u,pass:$("#lk").value})}),j=await r.json();if(j.error)throw new Error(j.error);TK=j.token;sessionStorage.setItem("adm_t",TK);await load()}catch(e){login(e.message)}}
 function logout(){sessionStorage.removeItem("adm_t");TK="";S=null;login()}
 function fix(n){const c=n.cfg=n.cfg||{};c.home=c.home||Object.keys(HBL).map(id=>({id,on:1}));c.nav=c.nav||NAV0.map(([i,t,h])=>({i,t,h,on:1}));c.ads=c.ads||[];c.colors={pri:"#9a6208",acc:"#e8ad1c",grn:"#3f7d2c",bg:"#fcf8e6",...(c.colors||{})};c.editorial=c.editorial||[];c.poll=c.poll||{q:"",o:[]};c.pages=c.pages||{};[["about","من نحن"],["privacy","سياسة الخصوصية"],["ads","أعلن معنا"]].forEach(([k,x])=>c.pages[k]=c.pages[k]||[x,""]);["arts","subs","coms","users","log"].forEach(k=>n[k]=n[k]||[]);n.stats=n.stats||{}}
-async function load(){if(!TK||!API)return login();try{const n=await api("getAll");fix(n);S=n;SIG=JSON.stringify(n);render()}catch(e){if(TK)login(e.message)}}
+async function load(){if(!TK||!API)return login();try{const n=await api("getAll");fix(n);S=n;VER=n.v;render()}catch(e){if(TK)login(e.message)}}
 const cnt=n=>({c:n.coms.filter(x=>x.r[6]==="جديد").length,s:n.subs.filter(x=>x.r[6]==="جديد").length});
 setInterval(async()=>{if(document.hidden||!TK||!S||ED||UE)return;const a=document.activeElement;if(a&&(/INPUT|TEXTAREA|SELECT/.test(a.tagName)||a.isContentEditable))return;if(!["arts","cmts","inbox","dash","log"].includes(TAB))return;
- try{const n=await api("getAll");fix(n);const g=JSON.stringify(n);if(g===SIG)return;const o=cnt(S),m=cnt(n);SIG=g;S=n;if(m.c>o.c)msg("وصل تعليق جديد");if(m.s>o.s)msg("وصلت مشاركة جديدة");render()}catch(e){}},30000);
+ try{const j=await api("ver");if(j.v===VER)return;const n=await api("getAll");fix(n);VER=n.v;const o=cnt(S),m=cnt(n);S=n;if(m.c>o.c)msg("وصل تعليق جديد");if(m.s>o.s)msg("وصلت مشاركة جديدة");render()}catch(e){}},30000);
 load();
 </script>
 </body>
