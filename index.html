@@ -29,8 +29,11 @@ header img{display:block;width:100%;height:auto;border-radius:14px}
 nav{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
 nav .wrap{display:flex;gap:4px;overflow-x:auto;padding-top:6px;padding-bottom:6px}
 nav a,nav button{white-space:nowrap;padding:6px 14px;border-radius:999px;color:var(--mut);background:none;border:0;font:inherit;cursor:pointer}
-nav a.on{background:var(--pri);color:#fff}
-nav .sp{color:var(--grn);font-weight:600}
+/* شريط المسار */
+nav .bc{display:flex;align-items:center;gap:2px;white-space:nowrap;font-size:14px;min-height:34px}
+nav .bc a{padding:4px 8px;border-radius:8px}nav .bc a:hover{color:var(--pri);background:var(--line)}
+nav .bc .sep{color:var(--mut);opacity:.6;flex:none}
+nav .bc .cur{color:var(--head);font-weight:700;padding:4px 8px;overflow:hidden;text-overflow:ellipsis;max-width:60vw}
 main{padding:22px 0 40px;min-height:60vh}
 .lead{display:grid;grid-template-columns:2fr 1fr;gap:16px}
 .hero{background:var(--pri) center/cover;color:#fff;border-radius:14px;padding:26px;display:flex;flex-direction:column;justify-content:flex-end;min-height:300px;position:relative;overflow:hidden}
@@ -85,7 +88,6 @@ html.dark .note.ok{background:#25391a;color:#cfe9b8}html.dark .note.er{backgroun
 .toast{position:fixed;bottom:20px;inset-inline:16px;max-width:360px;margin:auto;background:#222;color:#fff;padding:10px 16px;border-radius:12px;text-align:center;z-index:99}
 #rp{position:fixed;top:0;right:0;left:0;height:4px;background:var(--acc);transform:scaleX(0);transform-origin:right;z-index:50}
 .art{max-width:720px}.art h1{font-size:clamp(26px,5vw,40px);margin:10px 0}
-.art .sub{font-size:19px;font-weight:500;color:var(--mut);margin:0 0 10px}
 .meta{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;padding:10px 0;border-block:1px solid var(--line)}
 .art figure{margin:16px 0}.art figure img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:14px;margin:0}
 .tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:12px 0}
@@ -151,7 +153,7 @@ html.dark .off{background:#4a3b0a;color:#ffe9a6;border-color:#6d5a1c}
 .dl{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:10px;font:600 15px Cairo,sans-serif;color:var(--ink)}.dl:hover{background:var(--line)}.dl.on{background:var(--pri);color:#fff}
 .dsh{font:800 13px Cairo,sans-serif;color:var(--mut);padding:16px 14px 6px}
 .cn{font-style:normal;font-size:12px;background:var(--line);color:var(--mut);border-radius:999px;padding:0 9px;min-width:24px;text-align:center}.dl.on .cn{background:#fff3;color:#fff}
-.dft{padding:12px;border-top:1px solid var(--line);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}.dft .btn{width:100%;justify-content:center;margin:0}.dft .btn[hidden]{display:none}
+.dtp{padding:12px;border-bottom:1px solid var(--line)}.dtp .btn{width:100%;justify-content:center;margin:0}.dtp:has(.btn[hidden]){display:none}
 body.lock{overflow:hidden}
 .dh{display:flex;align-items:center;gap:10px;font:700 15px Cairo,sans-serif;color:var(--mut);margin:24px 0 10px}.dh::after{content:"";flex:1;height:1px;background:var(--line)}
 footer{background:var(--card);border-top:4px solid var(--grn);padding:0;margin-top:20px;color:var(--ink);font:500 15px/1.8 Cairo,sans-serif;text-align:start}
@@ -164,11 +166,6 @@ footer .fc a{margin:0;color:var(--mut);font-weight:500}footer .fc a:hover{color:
 .fcp{border-top:1px solid var(--line);padding-top:14px;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));color:var(--mut);font-size:13px;text-align:center}
 @media(max-width:720px){.fg{grid-template-columns:1fr 1fr;gap:22px}.fbr{grid-column:1/-1}}
 @media print{.top,.off,.fab,.dw,.ov{display:none}}
-/* ===== شريط المسار ===== */
-nav .bc{display:flex;align-items:center;gap:2px;white-space:nowrap;font-size:14px;min-height:34px}
-nav .bc a{padding:4px 8px;border-radius:8px;color:var(--mut)}nav .bc a:hover{color:var(--pri);background:var(--line)}
-nav .bc .sep{color:var(--mut);opacity:.6;flex:none}
-nav .bc .cur{color:var(--head);font-weight:700;padding:4px 8px;overflow:hidden;text-overflow:ellipsis;max-width:60vw}
 </style>
 </head>
 <body>
@@ -188,7 +185,7 @@ nav .bc .cur{color:var(--head);font-weight:700;padding:4px 8px;overflow:hidden;t
 <footer id="ft"></footer>
 <button class="fab" id="up" hidden onclick="scrollTo({top:0,behavior:'smooth'})" aria-label="للأعلى"></button>
 <div class="ov" id="ov" onclick="dr(0)"></div>
-<aside class="dw" id="dw" aria-hidden="true" aria-label="القائمة الجانبية"><div class="dhd"><b id="dn"></b><button class="ib" onclick="dr(0)" aria-label="إغلاق">✕</button></div><div class="dbd" id="dl"></div><div class="dft"><button class="btn g" id="inst" onclick="inst()">تثبيت التطبيق على الهاتف</button></div></aside>
+<aside class="dw" id="dw" aria-hidden="true" aria-label="القائمة الجانبية"><div class="dhd"><b id="dn"></b><button class="ib" onclick="dr(0)" aria-label="إغلاق">✕</button></div><div class="dtp"><button class="btn g" id="inst" onclick="inst()">تثبيت التطبيق على الهاتف</button></div><div class="dbd" id="dl"></div></aside>
 <script>
 /* ===== الإعدادات ===== */
 const API_URL = "https://script.google.com/macros/s/AKfycbyKDELYGajGcSeXCiqWdfdcwte6qHkScNmER3oaQKfvsPGZpNYGk28vCxPIXk37eJusCQ/exec";   // رابط Web App من Apps Script
@@ -258,7 +255,7 @@ article(id){
  const sv=saved().includes(String(a.id));
  const tags=String(a.tags||"").split(/[,،]/).map(x=>x.trim()).filter(Boolean);
  const rel=DATA.filter(x=>x.id!=a.id&&norm(x.section)===norm(a.section)).slice(0,3);
- return`<article class="art"><div id="rp" aria-hidden="true"></div><div class="tools"><button class="ib" onclick="history.length>1?history.back():location.hash='home'">رجوع</button></div>${(n=>n<0?`<span class="tag">${esc(a.section)}</span>`:`<a class="tag" href="#s-${n}">${esc(a.section)}</a>`)(SEC.findIndex(x=>norm(x)===norm(a.section)))}<h1>${esc(a.title)}</h1>${a.subtitle?`<p class="sub">${esc(a.subtitle)}</p>`:""}<div class="meta">${a.author?`<span>${esc(a.author)}</span>`:""}<span>${tm(a.date)}</span><span>${mins.toLocaleString("ar-EG")} دقائق قراءة</span></div>
+ return`<article class="art"><div id="rp" aria-hidden="true"></div><div class="tools"><button class="ib" onclick="history.length>1?history.back():location.hash='home'">رجوع</button></div>${(n=>n<0?`<span class="tag">${esc(a.section)}</span>`:`<a class="tag" href="#s-${n}">${esc(a.section)}</a>`)(SEC.findIndex(x=>norm(x)===norm(a.section)))}<h1>${esc(a.title)}</h1><div class="meta">${a.author?`<span>${esc(a.author)}</span>`:""}<span>${tm(a.date)}</span><span>${mins.toLocaleString("ar-EG")} دقائق قراءة</span></div>
  <div class="tools"><button class="ib" onclick="fs(2)" aria-label="تكبير الخط">أ+</button><button class="ib" onclick="fs(-2)" aria-label="تصغير الخط">أ−</button><button class="ib${sv?" on":""}" onclick="bk('${esc(a.id)}')">${sv?"محفوظ":"حفظ"}</button><button class="ib" onclick="print()">طباعة</button></div>
  ${img(a.img)?`<figure><img src="${th(a.img,1200)}" alt="${esc(a.title)}" fetchpriority="high" decoding="async"></figure>`:""}<div class="rich">${rich(a.body)}</div>
 ${tags.length?`<div class="chips">${tags.map(x=>`<a class="chip" href="#search" onclick="Q='${esc(x).replace(/'/g,"")}'">#${esc(x)}</a>`).join("")}</div>`:""}
@@ -299,7 +296,7 @@ function meta(id){const a=DATA.find(x=>String(x.id)===String(id));if(!a)return;d
  s.textContent=JSON.stringify({"@context":"https://schema.org","@type":"NewsArticle",headline:a.title,datePublished:a.date,author:{"@type":"Person",name:a.author||"مناسبات صراوة"},image:a.img||undefined})}
 function ds(v){Q=v;const n=norm(v),r=$("#res");if(!r)return;
  if(!n){r.innerHTML=`<p class="mu">اكتب كلمة في خانة البحث بالأعلى، أو تصفّح الأقسام:</p><div class="chips">${SEC.map((s,i)=>by(i).length?`<a class="chip" href="#s-${i}">${esc(s)}</a>`:"").join("")}</div>`;return}
- const t=n.split(/\s+/).filter(Boolean),sc=a=>{const all=norm([a.title,a.subtitle,a.body,a.author,a.tags,a.section].join(" "));if(!t.every(w=>all.includes(w)))return -1;const ti=norm(a.title),tg=norm(a.tags);return t.reduce((s,w)=>s+(ti.includes(w)?3:0)+(tg.includes(w)?2:0),0)};
+ const t=n.split(/\s+/).filter(Boolean),sc=a=>{const all=norm([a.title,a.body,a.author,a.tags,a.section].join(" "));if(!t.every(w=>all.includes(w)))return -1;const ti=norm(a.title),tg=norm(a.tags);return t.reduce((s,w)=>s+(ti.includes(w)?3:0)+(tg.includes(w)?2:0),0)};
  const L=DATA.map(a=>[a,sc(a)]).filter(x=>x[1]>=0).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
  r.innerHTML=L.length?`<p class="mu">${AN(L.length,["نتيجة واحدة","نتيجتان","نتائج","نتيجة"])} عن «${esc(v)}»</p>${grid(L)}`:`<p>لا توجد نتائج عن «${esc(v)}». جرّب كلمة أخرى.</p>`}
 function fs(d){const c=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--fs"))+d;document.documentElement.style.setProperty("--fs",Math.min(30,Math.max(14,c))+"px");ls("fs",c)}
@@ -337,14 +334,12 @@ function theme(){const d=document.documentElement.classList.toggle("dark");ls("d
 
 const IC={home:'<path d="M3 11l9-8 9 8v10H4z"/><path d="M9 21v-6h6v6"/>',news:'<path d="M4 5h13v14H6a2 2 0 0 1-2-2zM17 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3.2-6 6.5-6s6 2 6.5 6M16 4.5a3.5 3.5 0 0 1 0 7M18 14c2 .6 3.3 2.4 3.5 6"/>',trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',bookmark:'<path d="M6 3h12v18l-6-4-6 4z"/>',send:'<path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/>',moon:'<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',type:'<path d="M4 7V4h16v3M9 20h6M12 4v16"/>',dl:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',ext:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',fb:'<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/>',wa:'<path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/><path d="M9 9c0 3 3 6 6 6l1.5-1.5-2-1-1 .7c-1-.4-2-1.4-2.4-2.4l.7-1-1-2z"/>',yt:'<rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z"/>',tg:'<path d="M21.5 3L2.5 10.5l6 2 2 6.5 3-4 5 3.5z"/>',print:'<path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/>',link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',back:'<path d="M9 6l6 6-6 6"/>',bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 21a2 2 0 0 0 4 0"/>',heart:'<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',msg:'<path d="M4 5h16v11H9l-5 4z"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',up:'<path d="M6 15l6-6 6 6"/>',like:'<path d="M7 11v9H4v-9zM7 11l4-8c1.5 0 2.5 1 2.5 2.5V9H19a2 2 0 0 1 2 2.3l-1 6.4A2 2 0 0 1 18 19H7"/>'};
 const ic=n=>IC[n]?`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`:"";
-let CFG={name:"مناسبات صراوة",fb:FB_URL,wa:WHATSAPP,yt:"",tg:"",banner:"",colors:{},home:null,nav:null,ticker:1,comments:1,newsletter:1};
+let CFG={name:"مناسبات صراوة",fb:FB_URL,wa:WHATSAPP,yt:"",tg:"",banner:"",colors:{},home:null,ticker:1,comments:1,newsletter:1};
 const HB=["hero","main","events","top","picks","more","poll","news","follow"];
 const NAV0=[["home","الرئيسية","#home"],["news","أخبار صراوة","#s-0"],["cal","مناسبات صراوة","#s-2"],["users","شخصيات صراوة","#s-8"],["trophy","مسابقات","#s-32"],["grid","كل الأقسام","#sections"]];
 const soc=big=>[["fb",CFG.fb,"فيسبوك"],["wa",CFG.wa?"https://wa.me/"+String(CFG.wa).replace(/\D/g,""):"","واتساب"],["yt",CFG.yt,"يوتيوب"],["tg",CFG.tg,"تيليجرام"]].filter(x=>/^https:\/\//.test(x[1]||"")).map(([i,u,n])=>big?`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${ic(i)} ${n}</a>`:`<a class="ib" href="${esc(u)}" target="_blank" rel="noopener" aria-label="${n}" title="${n}">${ic(i)}</a>`).join("");
 function pi(){const r=document.documentElement;$("#tb").innerHTML=ic(r.classList.contains("dark")?"sun":"moon");$("#mn").innerHTML=ic("menu");$("#sb").innerHTML=ic("search");$("#up").innerHTML=ic("up");nBadge()}
 function fsz(){const c=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--fs"))||18;fs(c>=26?-8:4)}
-let dp;addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;$("#inst").hidden=false});addEventListener("appinstalled",()=>{dp=null;const b=$("#inst");if(b)b.hidden=true;tst("تم تثبيت التطبيق")});function inst(){if(dp){const d=dp;dp=null;d.prompt();d.userChoice.catch(()=>{});return}const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);tst(ios?"من زر المشاركة اختر: إضافة إلى الشاشة الرئيسية":"من قائمة المتصفح (⋮) اختر: تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية",6000)}
-if(matchMedia("(display-mode:standalone)").matches||navigator.standalone)document.addEventListener("DOMContentLoaded",()=>{const b=$("#inst");if(b)b.hidden=true});
 function crumbs(h){const H=["الرئيسية","#home"],T={notifications:"الإشعارات",saved:"المحفوظات",archive:"الأرشيف",submit:"أرسل مشاركتك",search:"بحث",sections:"كل الأقسام"};let c=[];
  if(/^s-\d+$/.test(h)&&SEC[+h.slice(2)])c=[H,[SEC[+h.slice(2)]]];
  else if(h.startsWith("a-")){const a=DATA.find(x=>String(x.id)===h.slice(2));
@@ -472,6 +467,13 @@ async function refresh(){if(!API_URL||document.hidden||location.hash==="#submit"
 addEventListener("hashchange",()=>{dr(0);route()});
 pi();{const c=ls("cache");if(c&&c.length){DATA=c;LOADED=1}}applyCfg(ls("cfg")||{});sync();rxAll();nInit();offUI();if(OFF)setTimeout(()=>tst("لا يوجد اتصال، يتم عرض آخر محتوى محفوظ",4500),700);
 setInterval(refresh,60000);addEventListener("online",refresh);document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()});
+/* ===== PWA: التثبيت وملف الخدمة ===== */
+let dp;const ib=()=>$("#inst"),isApp=()=>matchMedia("(display-mode:standalone)").matches||navigator.standalone;
+addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e});
+addEventListener("appinstalled",()=>{dp=null;ib().hidden=true;tst("تم تثبيت التطبيق")});
+function inst(){if(dp){const d=dp;dp=null;d.prompt();d.userChoice.catch(()=>{});return}
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);tst(ios?"من زر المشاركة اختر: إضافة إلى الشاشة الرئيسية":"من قائمة المتصفح (⋮) اختر: تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية",6000)}
+if(isApp())ib().hidden=true;
 if("serviceWorker"in navigator){const had=!!navigator.serviceWorker.controller;navigator.serviceWorker.register("sw.js").then(r=>{setInterval(()=>r.update(),3600000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)r.update()})}).catch(()=>{});navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had)location.reload()})}
 </script>
 </body>
