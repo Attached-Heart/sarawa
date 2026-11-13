@@ -339,7 +339,9 @@ const soc=big=>[["fb",CFG.fb,"فيسبوك"],["wa",CFG.wa?"https://wa.me/"+Strin
 function pi(){const r=document.documentElement;$("#tb").innerHTML=ic(r.classList.contains("dark")?"sun":"moon");$("#mn").innerHTML=ic("menu");$("#sb").innerHTML=ic("search");$("#up").innerHTML=ic("up");nBadge()}
 function fsz(){const c=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--fs"))||18;fs(c>=26?-8:4)}
 let dp;addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;$("#inst").hidden=false});function inst(){dp&&dp.prompt()}
-function renderNav(){const L=(CFG.nav||NAV0.map(([i,t,h])=>({i,t,h,on:1}))).filter(x=>x.on!=0);$("#nav").innerHTML=L.map(x=>`<a href="${esc(x.h)}">${esc(x.t)}</a>`).join("");tick();route()}
+const GUIDE=["أفراح","مناسبات","الجذر"];   // عدّل الكلمات هنا، أو من الإعدادات بحقل guide
+function renderNav(){const L=Array.isArray(CFG.guide)&&CFG.guide.length?CFG.guide:GUIDE;
+ $("#nav").innerHTML='<span class="sp">الدليل:</span>'+L.map(t=>{const i=SEC.findIndex(x=>norm(x).includes(norm(t)));return i>=0?`<a href="#s-${i}">${esc(t)}</a>`:`<a href="#search" onclick="Q='${esc(t).replace(/'/g,"")}'">${esc(t)}</a>`}).join("");tick();route()}
 function applyCfg(c){CFG={...CFG,...c};
  const k=CFG.colors||{},v=[["pri",k.pri],["acc",k.acc],["grn",k.grn],["bg",k.bg]].filter(x=>/^#[0-9a-f]{6}$/i.test(x[1]||""));
  let s=document.getElementById("cs");if(!s){s=document.createElement("style");s.id="cs";document.head.appendChild(s)}
