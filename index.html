@@ -7,7 +7,7 @@
 <meta name="description" content="مجلة مناسبات صراوة: أخبار القرية ومناسباتها وشخصياتها">
 <meta name="application-name" content="مناسبات صراوة">
 <meta name="apple-mobile-web-app-title" content="مناسبات صراوة">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#9a6208">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon.png">
@@ -343,7 +343,7 @@ const NAV0=[["home","الرئيسية","#home"],["news","أخبار صراوة",
 const soc=big=>[["fb",CFG.fb,"فيسبوك"],["wa",CFG.wa?"https://wa.me/"+String(CFG.wa).replace(/\D/g,""):"","واتساب"],["yt",CFG.yt,"يوتيوب"],["tg",CFG.tg,"تيليجرام"]].filter(x=>/^https:\/\//.test(x[1]||"")).map(([i,u,n])=>big?`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${ic(i)} ${n}</a>`:`<a class="ib" href="${esc(u)}" target="_blank" rel="noopener" aria-label="${n}" title="${n}">${ic(i)}</a>`).join("");
 function pi(){const r=document.documentElement;$("#tb").innerHTML=ic(r.classList.contains("dark")?"sun":"moon");$("#mn").innerHTML=ic("menu");$("#sb").innerHTML=ic("search");$("#up").innerHTML=ic("up");nBadge()}
 function fsz(){const c=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--fs"))||18;fs(c>=26?-8:4)}
-let dp;addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;$("#inst").hidden=false});function inst(){if(dp){dp.prompt();return}const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);tst(ios?"من زر المشاركة اختر: إضافة إلى الشاشة الرئيسية":"من قائمة المتصفح (⋮) اختر: تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية",6000)}
+let dp;addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;$("#inst").hidden=false});addEventListener("appinstalled",()=>{dp=null;const b=$("#inst");if(b)b.hidden=true;tst("تم تثبيت التطبيق")});function inst(){if(dp){const d=dp;dp=null;d.prompt();d.userChoice.catch(()=>{});return}const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);tst(ios?"من زر المشاركة اختر: إضافة إلى الشاشة الرئيسية":"من قائمة المتصفح (⋮) اختر: تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية",6000)}
 if(matchMedia("(display-mode:standalone)").matches||navigator.standalone)document.addEventListener("DOMContentLoaded",()=>{const b=$("#inst");if(b)b.hidden=true});
 function crumbs(h){const H=["الرئيسية","#home"],T={notifications:"الإشعارات",saved:"المحفوظات",archive:"الأرشيف",submit:"أرسل مشاركتك",search:"بحث",sections:"كل الأقسام"};let c=[];
  if(/^s-\d+$/.test(h)&&SEC[+h.slice(2)])c=[H,[SEC[+h.slice(2)]]];

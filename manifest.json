@@ -1,1 +1,19 @@
-{"name":"مناسبات صراوة","short_name":"صراوة","lang":"ar","dir":"rtl","start_url":"./","display":"standalone","background_color":"#fcf8e6","theme_color":"#9a6208","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png"}]}
+{
+  "id": "./",
+  "name": "مناسبات صراوة",
+  "short_name": "مناسبات صراوة",
+  "description": "أخبار قرية صراوة ومناسباتها وشخصياتها",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fcf8e6",
+  "theme_color": "#9a6208",
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

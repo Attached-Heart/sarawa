@@ -1,6 +1,6 @@
-/*v5*/
+/*v6*/
 const META="sr-meta";
-const SHELL=["./","index.html","manifest.json","banner.jpg","icon-192.png","icon.png"];
+const SHELL=["./","index.html","manifest.json","banner.jpg","icon-192.png","icon-512.png","icon.png"];
 self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open("sr1").then(c=>Promise.all(SHELL.map(u=>c.add(u).catch(()=>{})))))});
 self.addEventListener("activate",e=>e.waitUntil(clients.claim()));
 /* نسخة قديمة من استجابة الـAPI تُعلَّم برأس يقرؤه التطبيق ليُنبّه المستخدم أنه دون اتصال */
