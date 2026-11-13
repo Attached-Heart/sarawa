@@ -164,6 +164,11 @@ footer .fc a{margin:0;color:var(--mut);font-weight:500}footer .fc a:hover{color:
 .fcp{border-top:1px solid var(--line);padding-top:14px;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px));color:var(--mut);font-size:13px;text-align:center}
 @media(max-width:720px){.fg{grid-template-columns:1fr 1fr;gap:22px}.fbr{grid-column:1/-1}}
 @media print{.top,.off,.fab,.dw,.ov{display:none}}
+/* ===== شريط المسار ===== */
+nav .bc{display:flex;align-items:center;gap:2px;white-space:nowrap;font-size:14px;min-height:34px}
+nav .bc a{padding:4px 8px;border-radius:8px;color:var(--mut)}nav .bc a:hover{color:var(--pri);background:var(--line)}
+nav .bc .sep{color:var(--mut);opacity:.6;flex:none}
+nav .bc .cur{color:var(--head);font-weight:700;padding:4px 8px;overflow:hidden;text-overflow:ellipsis;max-width:60vw}
 </style>
 </head>
 <body>
@@ -325,7 +330,7 @@ function route(){
  if(k==="search"){document.body.classList.add("so");const q=$("#hq");if(q&&q.value!==Q)q.value=Q;ds(Q);if(!Q&&q&&!KEEP)q.focus()}else if(document.activeElement!==$("#hq"))document.body.classList.remove("so");
  if($("#dw").classList.contains("open"))drawer();
  if(k==="article"){meta(v);cmL(v);rxInit();rxLoad(v);nRead(v)}else document.title=CFG.name;
- document.querySelectorAll("#nav a").forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+h));
+ crumbs(h);
  if(!KEEP)scrollTo(0,0)}
 function theme(){const d=document.documentElement.classList.toggle("dark");ls("dk",d);pi()}
 {const d=ls("dk");if(d===null?matchMedia("(prefers-color-scheme:dark)").matches:d)document.documentElement.classList.add("dark");const f=ls("fs");if(f)document.documentElement.style.setProperty("--fs",f+"px")}
@@ -339,9 +344,15 @@ const soc=big=>[["fb",CFG.fb,"فيسبوك"],["wa",CFG.wa?"https://wa.me/"+Strin
 function pi(){const r=document.documentElement;$("#tb").innerHTML=ic(r.classList.contains("dark")?"sun":"moon");$("#mn").innerHTML=ic("menu");$("#sb").innerHTML=ic("search");$("#up").innerHTML=ic("up");nBadge()}
 function fsz(){const c=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--fs"))||18;fs(c>=26?-8:4)}
 let dp;addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;$("#inst").hidden=false});function inst(){dp&&dp.prompt()}
-const GUIDE=["أفراح","مناسبات","الجذر"];   // عدّل الكلمات هنا، أو من الإعدادات بحقل guide
-function renderNav(){const L=Array.isArray(CFG.guide)&&CFG.guide.length?CFG.guide:GUIDE;
- $("#nav").innerHTML='<span class="sp">الدليل:</span>'+L.map(t=>{const i=SEC.findIndex(x=>norm(x).includes(norm(t)));return i>=0?`<a href="#s-${i}">${esc(t)}</a>`:`<a href="#search" onclick="Q='${esc(t).replace(/'/g,"")}'">${esc(t)}</a>`}).join("");tick();route()}
+function crumbs(h){const H=["الرئيسية","#home"],T={notifications:"الإشعارات",saved:"المحفوظات",archive:"الأرشيف",submit:"أرسل مشاركتك",search:"بحث",sections:"كل الأقسام"};let c=[];
+ if(/^s-\d+$/.test(h)&&SEC[+h.slice(2)])c=[H,[SEC[+h.slice(2)]]];
+ else if(h.startsWith("a-")){const a=DATA.find(x=>String(x.id)===h.slice(2));
+  if(a){const i=SEC.findIndex(x=>norm(x)===norm(a.section));c=[H].concat(i>=0?[[SEC[i],"#s-"+i]]:[],[[a.title]])}else c=[H,["خبر"]]}
+ else if(PAGES[h])c=[H,[PAGES[h][0]]];
+ else if(T[h])c=[H,[T[h]]];
+ else c=[["الرئيسية"]];
+ $("#nav").innerHTML='<div class="bc" role="navigation" aria-label="مسار التصفح">'+c.map((x,i)=>{const last=i===c.length-1;return(i?'<span class="sep" aria-hidden="true">‹</span>':"")+(last||!x[1]?`<span class="cur"${last?' aria-current="page"':""}>${esc(x[0])}</span>`:`<a href="${x[1]}">${esc(x[0])}</a>`)}).join("")+"</div>"}
+function renderNav(){tick();route()}
 function applyCfg(c){CFG={...CFG,...c};
  const k=CFG.colors||{},v=[["pri",k.pri],["acc",k.acc],["grn",k.grn],["bg",k.bg]].filter(x=>/^#[0-9a-f]{6}$/i.test(x[1]||""));
  let s=document.getElementById("cs");if(!s){s=document.createElement("style");s.id="cs";document.head.appendChild(s)}
