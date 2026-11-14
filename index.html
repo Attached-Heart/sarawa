@@ -219,7 +219,7 @@ const th=(u,w)=>{const x=img(u);return/^https:\/\/lh3\.googleusercontent\.com\/d
 let DT;const dds=v=>{clearTimeout(DT);DT=setTimeout(()=>ds(v),200)};
 const ls=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}};
 const by=i=>DATA.filter(a=>norm(a.section)===norm(SEC[i]));
-const card=a=>`<a class="item" href="#a-${esc(a.id)}">${img(a.img)?`<img src="${th(a.img,600)}" alt="" loading="lazy" decoding="async">`:""}<span class="tag">${esc(a.section)}</span>${nwb(a)}<h3>${esc(a.title)}</h3><small>${esc(a.author||"")} ${a.author?"•":""} ${tm(a.date)}</small>${cst(a)}</a>`;
+const card=a=>`<a class="item" href="#a-${esc(a.id)}">${img(a.img)?`<img src="${th(a.img,600)}" alt="" loading="lazy" decoding="async">`:""}<span class="tag">${sIc(a.section)}${esc(a.section)}</span>${nwb(a)}<h3>${esc(a.title)}</h3><small>${esc(a.author||"")} ${a.author?"•":""} ${tm(a.date)}</small>${cst(a)}</a>`;
 const grid=L=>L.length?`<div class="grid">${L.map(card).join("")}</div>`:`<p>لا توجد مقالات هنا بعد.</p>`;
 const saved=()=>ls("sv")||[];
 let PAGES={about:["من نحن","مجلة مناسبات صراوة منصة إعلامية تنقل أخبار القرية ومناسباتها وشخصياتها. (نص تجريبي يُستبدل بنصكم)"],privacy:["سياسة الخصوصية","نص تجريبي. يُكتب هنا ما نجمعه من بيانات وكيف نحميها وكيف يطلب المستخدم حذف بياناته."],ads:["أعلن معنا","للإعلان في المجلة والتطبيق تواصل معنا عبر صفحة فيسبوك أو واتساب."]};
@@ -229,7 +229,7 @@ home(){
  const [h,...r]=DATA,bg=img(h.img)?` style="background-image:url('${th(h.img,1000)}')"`:"",td=new Date(new Date().toDateString());
  const hd=x=>`<h2 class="h">${x}</h2>`,sx=i=>{const L=by(i);return L.length?`<h2 class="h"><a href="#s-${i}">${SEC[i]}</a></h2>${grid(L.slice(0,3))}`:""};
  const B={
-  hero:()=>`<div class="lead"><a class="hero" href="#a-${esc(h.id)}"${bg}><span class="tag">${esc(h.section)}</span><h1>${esc(h.title)}</h1><small>${tm(h.date)}</small></a><div class="side">${r.slice(0,3).map(card).join("")}</div></div>`+adSlot("top"),
+  hero:()=>`<div class="lead"><a class="hero" href="#a-${esc(h.id)}"${bg}><span class="tag">${sIc(h.section)}${esc(h.section)}</span><h1>${esc(h.title)}</h1><small>${tm(h.date)}</small></a><div class="side">${r.slice(0,3).map(card).join("")}</div></div>`+adSlot("top"),
   events:()=>{const u=DATA.filter(a=>a.eventdate&&new Date(a.eventdate)>=td).sort((a,b)=>new Date(a.eventdate)-new Date(b.eventdate)).slice(0,3);return u.length?hd("المناسبات القادمة","cal")+`<div class="grid">${u.map(a=>`<a class="item" href="#a-${esc(a.id)}"><span class="tag">${fmt(a.eventdate)}</span><h3>${esc(a.title)}</h3><small>${esc(a.place||"")}</small></a>`).join("")}</div>`:""},
   top:()=>{const x=[...DATA].filter(a=>+a.views>0).sort((a,b)=>b.views-a.views).slice(0,4);return x.length?hd("الأكثر قراءة","news")+grid(x):""},
   picks:()=>{const x=DATA.filter(a=>flag(a.pick)).slice(0,4);return x.length?hd("اختيارات هيئة التحرير","bookmark")+grid(x):""},
@@ -243,7 +243,7 @@ section(i){
  if(!SEC[i])return view.home();
  if(SF.i!==i)SF={i,sort:"new",q:"",y:"",p:1};
  const ys=[...new Set(by(i).map(a=>new Date(a.date).getFullYear()).filter(Boolean))].sort((a,b)=>b-a);
- return`<h1>${SEC[i]}</h1><div style="height:12px"></div><div class="bar2"><input class="inp" type="search" placeholder="بحث داخل القسم" value="${esc(SF.q)}" oninput="SF.q=this.value;SF.p=1;rs()"><select class="inp" onchange="SF.sort=this.value;rs()"><option value="new">الأحدث</option><option value="top"${SF.sort==="top"?" selected":""}>الأكثر قراءة</option></select><select class="inp" onchange="SF.y=this.value;SF.p=1;rs()"><option value="">كل السنوات</option>${ys.map(y=>`<option${SF.y==y?" selected":""}>${y}</option>`).join("")}</select></div><div id="sl">${sl()}</div>`},
+ return`<h1>${secI(i)} ${SEC[i]}</h1><div style="height:12px"></div><div class="bar2"><input class="inp" type="search" placeholder="بحث داخل القسم" value="${esc(SF.q)}" oninput="SF.q=this.value;SF.p=1;rs()"><select class="inp" onchange="SF.sort=this.value;rs()"><option value="new">الأحدث</option><option value="top"${SF.sort==="top"?" selected":""}>الأكثر قراءة</option></select><select class="inp" onchange="SF.y=this.value;SF.p=1;rs()"><option value="">كل السنوات</option>${ys.map(y=>`<option${SF.y==y?" selected":""}>${y}</option>`).join("")}</select></div><div id="sl">${sl()}</div>`},
 archive(){const ys=[...new Set(DATA.map(a=>new Date(a.date).getFullYear()).filter(Boolean))].sort((a,b)=>b-a);
  return`<h1>الأرشيف</h1><div style="height:12px"></div><div class="bar2"><select class="inp" id="ay" onchange="ar()"><option value="">كل السنوات</option>${ys.map(y=>`<option>${y}</option>`).join("")}</select><select class="inp" id="am" onchange="ar()"><option value="">كل الشهور</option>${MN.map((m,i)=>`<option value="${i+1}">${m}</option>`).join("")}</select></div><div id="al">${arl()}</div>`},
 editorial(){return`<h1>هيئة التحرير</h1><div class="grid" style="margin-top:14px">${EDITORIAL.map(([r,n])=>`<div class="item"><span class="tag">${esc(r)}</span><h3>${esc(n)}</h3></div>`).join("")}</div>`},
@@ -296,7 +296,7 @@ function meta(id){const a=DATA.find(x=>String(x.id)===String(id));if(!a)return;d
  let s=document.getElementById("ld");if(!s){s=document.createElement("script");s.id="ld";s.type="application/ld+json";document.head.appendChild(s)}
  s.textContent=JSON.stringify({"@context":"https://schema.org","@type":"NewsArticle",headline:a.title,datePublished:a.date,author:{"@type":"Person",name:a.author||"مناسبات صراوة"},image:a.img||undefined})}
 function ds(v){Q=v;const n=norm(v),r=$("#res");if(!r)return;
- if(!n){r.innerHTML=`<p class="mu">اكتب كلمة في خانة البحث بالأعلى، أو تصفّح الأقسام:</p><div class="chips">${SEC.map((s,i)=>by(i).length?`<a class="chip" href="#s-${i}">${esc(s)}</a>`:"").join("")}</div>`;return}
+ if(!n){r.innerHTML=`<p class="mu">اكتب كلمة في خانة البحث بالأعلى، أو تصفّح الأقسام:</p><div class="chips">${SEC.map((s,i)=>by(i).length?`<a class="chip" href="#s-${i}">${secI(i)} ${esc(s)}</a>`:"").join("")}</div>`;return}
  const t=n.split(/\s+/).filter(Boolean),sc=a=>{const all=norm([a.title,a.body,a.author,a.tags,a.section].join(" "));if(!t.every(w=>all.includes(w)))return -1;const ti=norm(a.title),tg=norm(a.tags);return t.reduce((s,w)=>s+(ti.includes(w)?3:0)+(tg.includes(w)?2:0),0)};
  const L=DATA.map(a=>[a,sc(a)]).filter(x=>x[1]>=0).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
  r.innerHTML=L.length?`<p class="mu">${AN(L.length,["نتيجة واحدة","نتيجتان","نتائج","نتيجة"])} عن «${esc(v)}»</p>${grid(L)}`:`<p>لا توجد نتائج عن «${esc(v)}». جرّب كلمة أخرى.</p>`}
@@ -441,13 +441,15 @@ function nAll(){NT.forEach(x=>x.r=1);nSave();rr()}
 function nClr(){NT=[];nSave();rr()}
 view.notifications=()=>{const sup="Notification"in window,pm=sup?Notification.permission:"",on=pm==="granted"&&ls("non")!==0,fl=ls("nsec")||[];
  const st=!sup?`<div class="note">متصفحك لا يدعم إشعارات الويب. على آيفون: أضف التطبيق إلى الشاشة الرئيسية ثم افتحه من هناك لتفعيل الإشعارات.</div>`:pm==="denied"?`<div class="note er">الإشعارات محظورة. اسمح بها من إعدادات الموقع في المتصفح ثم أعد المحاولة.</div>`:on?`<div class="note ok">إشعارات المتصفح مفعّلة. <button class="btn o" onclick="nOff()">إيقاف</button></div>`:`<div class="note"><b>لا يفوتك خبر</b><br>فعّل الإشعارات لتصلك الأخبار الجديدة فور نشرها.<br><button class="btn g" onclick="nOn()">تفعيل الإشعارات</button></div>`;
- const ch=`<button class="chip${fl.length?"":" on"}" onclick="nSec(-1)">كل الأقسام</button>`+[0,1,2,3,5,6,7,8,18,22,26,32].map(i=>`<button class="chip${fl.includes(norm(SEC[i]))?" on":""}" onclick="nSec(${i})">${SEC[i]}</button>`).join("");
+ const ch=`<button class="chip${fl.length?"":" on"}" onclick="nSec(-1)">كل الأقسام</button>`+[0,1,2,3,5,6,7,8,18,22,26,32].map(i=>`<button class="chip${fl.includes(norm(SEC[i]))?" on":""}" onclick="nSec(${i})">${secI(i)} ${SEC[i]}</button>`).join("");
  const L=NT.length?`<div class="bar"><button class="btn o" onclick="nAll()">تعليم الكل كمقروء</button><button class="btn o" onclick="nClr()">مسح الكل</button></div><div class="nl">${NT.map(ntItem).join("")}</div>`:`<div class="note">لا توجد إشعارات بعد. ستظهر هنا الأخبار الجديدة فور نشرها.</div>`;
  return`<h1>الإشعارات</h1><div style="height:12px"></div>${st}<h2 class="h">الأقسام التي أتابعها</h2><div class="chips">${ch}</div><p class="mu" style="font-size:13px">الأخبار العاجلة تصلك دائماً بغض النظر عن الأقسام.</p><h2 class="h">آخر الإشعارات</h2>${L}`};
 function nInit(){addEventListener("scroll",()=>{const u=$("#up");if(u)u.hidden=scrollY<700},{passive:true});
  document.addEventListener("pointerdown",e=>{const p=$("#pk");if(p&&!p.parentNode.contains(e.target))p.classList.remove("open")});
  document.addEventListener("keydown",e=>{if(e.key==="Escape"){shx();dr(0)}});setInterval(rxAll,3e5);nAdm();setInterval(nAdm,6e4);addEventListener("online",nAdm);document.addEventListener("visibilitychange",()=>{if(!document.hidden)nAdm()});
  if("Notification"in window&&Notification.permission==="granted"&&ls("non")!==0)regPS();swSeen()}
+const SECI=["📰","⚡","🎉","💍","💑","👶","🏆","🕊️","👤","🌟","💼","📈","🏛️","🏦","📊","✈️","🎤","🎭","⚽","🩺","🎓","💻","🤝","🌱","❤️","🌍","🛠️","✍️","🔍","🎙️","🏢","📢","🎁","🗳️","🎬","📷","🖼️","🗄️","📝","⚙️"];
+const secI=i=>(CFG.icons&&CFG.icons[i])||SECI[i]||"",sIc=n=>{const i=SEC.findIndex(x=>norm(x)===norm(n));return i>=0?secI(i)+" ":""};
 /* ===== الصفحة الرئيسية: الأحدث ثم الأقدم ===== */
 let HP=1;
 const dayL=d=>{const t=new Date(d);if(isNaN(t))return"";const n=Math.round((new Date(new Date().toDateString())-new Date(t.toDateString()))/864e5);return n===0?"اليوم":n===1?"أمس":fmt(d)};
@@ -465,10 +467,10 @@ function dr(o){const d=$("#dw");if(!d)return;d.classList.toggle("open",!!o);$("#
 function drawer(){const h="#"+(location.hash.slice(1)||"home"),n=nUn(),sv=saved().length,c=x=>x?`<i class="cn">${x.toLocaleString("ar-EG")}</i>`:"",
  ln=(href,t,x)=>`<a class="dl${h===href?" on":""}" href="${href}"><span>${t}</span>${x||""}</a>`;
  $("#dn").textContent=CFG.name;
- $("#dl").innerHTML=ln("#home","الرئيسية")+ln("#notifications","الإشعارات",c(n))+ln("#saved","المحفوظات",c(sv))+ln("#archive","الأرشيف")+ln("#submit","أرسل مشاركتك")+`<div class="dsh">الأقسام</div>`+SEC.map((s,i)=>{const k=by(i).length;return k?ln("#s-"+i,esc(s),c(k)):""}).join("")}
+ $("#dl").innerHTML=ln("#home","الرئيسية")+ln("#notifications","الإشعارات",c(n))+ln("#saved","المحفوظات",c(sv))+ln("#archive","الأرشيف")+ln("#submit","أرسل مشاركتك")+`<div class="dsh">الأقسام</div>`+SEC.map((s,i)=>{const k=by(i).length;return k?ln("#s-"+i,secI(i)+" "+esc(s),c(k)):""}).join("")}
 /* ===== الفوتر ===== */
 function foot(){const P=(h,x)=>`<a href="#${h}">${esc(PAGES[h]?PAGES[h][0]:x)}</a>`;
- $("#ft").innerHTML=`<div class="wrap fg"><div class="fc fbr"><b>${esc(CFG.name)}</b><p>تشارككم لحظاتكم دائماً. أخبار القرية ومناسباتها وشخصياتها في مكان واحد.</p><div class="soc">${soc(0)}</div></div><div class="fc"><h4>الأقسام</h4>${MAIN.map(i=>`<a href="#s-${i}">${SEC[i]}</a>`).join("")}<a href="#archive">الأرشيف</a></div><div class="fc"><h4>عن المجلة</h4>${P("about","من نحن")}${P("editorial","هيئة التحرير")}${P("ads","أعلن معنا")}${P("privacy","سياسة الخصوصية")}</div><div class="fc"><h4>تواصل معنا</h4>${P("contact","تواصل معنا")}<a href="#submit">أرسل مشاركتك</a><a href="#notifications">الإشعارات</a></div></div><div class="wrap fcp">© ${new Date().getFullYear()} ${esc(CFG.name)}. جميع الحقوق محفوظة.</div>`}
+ $("#ft").innerHTML=`<div class="wrap fg"><div class="fc fbr"><b>${esc(CFG.name)}</b><p>تشارككم لحظاتكم دائماً. أخبار القرية ومناسباتها وشخصياتها في مكان واحد.</p><div class="soc">${soc(0)}</div></div><div class="fc"><h4>الأقسام</h4>${MAIN.map(i=>`<a href="#s-${i}">${secI(i)} ${SEC[i]}</a>`).join("")}<a href="#archive">الأرشيف</a></div><div class="fc"><h4>عن المجلة</h4>${P("about","من نحن")}${P("editorial","هيئة التحرير")}${P("ads","أعلن معنا")}${P("privacy","سياسة الخصوصية")}</div><div class="fc"><h4>تواصل معنا</h4>${P("contact","تواصل معنا")}<a href="#submit">أرسل مشاركتك</a><a href="#notifications">الإشعارات</a></div></div><div class="wrap fcp">© ${new Date().getFullYear()} ${esc(CFG.name)}. جميع الحقوق محفوظة.</div>`}
 /* ===== العمل دون اتصال ===== */
 let OFF=!navigator.onLine;
 function offUI(){const b=$("#off");if(!b)return;b.hidden=!OFF;if(OFF){const t=ls("ct");b.textContent="أنت غير متصل بالإنترنت. تُعرض آخر نسخة محفوظة من المجلة"+(t?" (آخر تحديث: "+ago(t)+")":"")+"."}}
