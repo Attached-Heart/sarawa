@@ -167,6 +167,15 @@ footer .fc a{margin:0;color:var(--mut);font-weight:500}footer .fc a:hover{color:
 @media(max-width:720px){.fg{grid-template-columns:1fr 1fr;gap:22px}.fbr{grid-column:1/-1}}
 @media print{.top,.off,.fab,.dw,.ov{display:none}}
 .nt.adm .ni{background:var(--pri);color:#fff}
+.kids{margin-inline-start:46px}.kids .av{width:30px;height:30px;font-size:13px}.lk{background:none;border:0;color:var(--pri);font:600 13px Cairo,sans-serif;cursor:pointer;padding:4px 0 0}.cf{margin:10px 0}
+@media(max-width:520px){.kids{margin-inline-start:26px}}
+.uav{width:30px;height:30px;border-radius:50%;object-fit:cover}.av{overflow:hidden}.av img{width:100%;height:100%;object-fit:cover}
+.ob{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:700 15px Cairo,sans-serif;cursor:pointer;margin:8px 0}.ob.fb{background:#1877F2;border-color:#1877F2;color:#fff}
+#gb{display:flex;justify-content:center;min-height:44px;margin:8px 0}
+.admb{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:color-mix(in srgb,var(--acc) 14%,var(--card));border:1px dashed var(--acc);border-radius:12px;padding:8px 10px;margin:10px 0}.admb b{font-size:13px;color:var(--head);margin-inline-end:4px}
+.admb .btn{min-height:34px;padding:4px 12px;font-size:13px;margin:0}.btn.r{background:#b3261e;color:#fff}
+.mod{display:flex;flex-wrap:wrap;gap:12px;margin-top:2px}.mod .lk.r{color:#b3261e}.bdg{font-size:11px;background:var(--line);color:var(--mut);border-radius:999px;padding:0 8px;margin-inline-start:6px}
+.who{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-weight:700}
 </style>
 </head>
 <body>
@@ -176,6 +185,7 @@ footer .fc a{margin:0;color:var(--mut);font-weight:500}footer .fc a:hover{color:
 <form class="hs" role="search" onsubmit="hsGo(event)"><input id="hq" type="search" placeholder="ابحث في المجلة..." aria-label="بحث" oninput="hsIn(this.value)" enterkeyhint="search"></form>
 <button class="ib" id="sb" onclick="hsTog()" aria-label="بحث"></button>
 <a class="ib" id="bell" href="#notifications" aria-label="الإشعارات" title="الإشعارات"></a>
+<button class="ib" id="ub" onclick="ua()" aria-label="الحساب" title="الحساب"></button>
 <button class="ib" id="tb" onclick="theme()" aria-label="الوضع الليلي" title="الوضع الليلي"></button>
 </div></div>
 <div id="off" class="off" role="status" hidden></div>
@@ -257,11 +267,11 @@ article(id){
  const tags=String(a.tags||"").split(/[,،]/).map(x=>x.trim()).filter(Boolean);
  const rel=DATA.filter(x=>x.id!=a.id&&norm(x.section)===norm(a.section)).slice(0,3);
  return`<article class="art"><div id="rp" aria-hidden="true"></div><div class="tools"><button class="ib" onclick="history.length>1?history.back():location.hash='home'">رجوع</button></div>${(n=>n<0?`<span class="tag">${esc(a.section)}</span>`:`<a class="tag" href="#s-${n}">${esc(a.section)}</a>`)(SEC.findIndex(x=>norm(x)===norm(a.section)))}<h1>${esc(a.title)}</h1><div class="meta">${a.author?`<span>${esc(a.author)}</span>`:""}<span>${tm(a.date)}</span><span>${mins.toLocaleString("ar-EG")} دقائق قراءة</span></div>
- <div class="tools"><button class="ib" onclick="fs(2)" aria-label="تكبير الخط">أ+</button><button class="ib" onclick="fs(-2)" aria-label="تصغير الخط">أ−</button><button class="ib${sv?" on":""}" onclick="bk('${esc(a.id)}')">${sv?"محفوظ":"حفظ"}</button><button class="ib" onclick="print()">طباعة</button></div>
+ ${admBar(a)}<div class="tools"><button class="ib" onclick="fs(2)" aria-label="تكبير الخط">أ+</button><button class="ib" onclick="fs(-2)" aria-label="تصغير الخط">أ−</button><button class="ib${sv?" on":""}" onclick="bk('${esc(a.id)}')">${sv?"محفوظ":"حفظ"}</button><button class="ib" onclick="print()">طباعة</button></div>
  ${img(a.img)?`<figure><img src="${th(a.img,1200)}" alt="${esc(a.title)}" fetchpriority="high" decoding="async"></figure>`:""}<div class="rich">${rich(a.body)}</div>
 ${tags.length?`<div class="chips">${tags.map(x=>`<a class="chip" href="#search" onclick="Q='${esc(x).replace(/'/g,"")}'">#${esc(x)}</a>`).join("")}</div>`:""}
 <div id="rx" data-id="${esc(a.id)}">${rxH(a.id)}</div><div class="bar"><button class="btn o" onclick="PRE='تصحيح معلومة: ${esc(a.title).replace(/'/g,"")}';location.hash='submit'">إبلاغ عن خطأ</button></div>
-${adSlot("article")}${flag(CFG.comments)?`<h2 class="h" id="cms">التعليقات</h2><div id="cl"></div><form onsubmit="cm(event,'${esc(a.id)}')"><input class="inp" id="cn" required placeholder="الاسم"><textarea class="inp" id="ct" rows="3" required placeholder="اكتب تعليقك"></textarea><button class="btn g">إرسال التعليق</button></form><div id="cr"></div>`:""}${rel.length?`<h2 class="h">اقرأ أيضاً</h2>${grid(rel)}`:""}</article>`},
+${adSlot("article")}${flag(CFG.comments)?`<h2 class="h" id="cms">التعليقات</h2><div id="cl"></div><div id="cr"></div><div id="cf"></div><p><button class="btn g" onclick="cfOpen('${esc(a.id)}')">اكتب تعليقاً</button></p>`:""}${rel.length?`<h2 class="h">اقرأ أيضاً</h2>${grid(rel)}`:""}</article>`},
 search(){return`<h1>نتائج البحث</h1><div id="res" style="margin-top:12px"></div>`},
 saved(){const s=saved();return`<h1>المحفوظات</h1><div style="height:12px"></div>`+grid(DATA.filter(a=>s.includes(String(a.id))))},
 submit(){return`<h1>أرسل مشاركتك</h1><p>خبر، مناسبة، صورة، إعلان، ترشيح شخصية، اقتراح، تصحيح أو بلاغ. سنراجعها قبل النشر.</p>
@@ -290,7 +300,6 @@ function ar(){$("#al").innerHTML=arl()}
 function pollH(){const v=ls("pv");return v!=null?`<p>شكراً لتصويتك: ${esc(POLL.o[v])}</p>`:`<div class="poll"><b>${esc(POLL.q)}</b>${POLL.o.map((x,i)=>`<button class="btn o" onclick="pv(${i})">${esc(x)}</button>`).join("")}</div>`}
 function pv(i){ls("pv",i);post({type:"تصويت",ref:POLL.q,text:POLL.o[i]});route()}
 async function nl(e){e.preventDefault();const f=e.target,r=$("#nr");busy(f,1);stt(r,"",WAIT);const j=await post({type:"اشتراك",contact:$("#ne").value});busy(f,0);if(j.ok){stt(r,"ok","تم اشتراكك بنجاح، شكراً لك.");f.reset()}else stt(r,"er",esc(j.error||"تعذر الإرسال"))}
-async function cm(e,id){e.preventDefault();const f=e.target,r=$("#cr");busy(f,1);stt(r,"",WAIT);const j=await post({type:"تعليق",ref:id,name:$("#cn").value,text:$("#ct").value});busy(f,0);if(j.ok){stt(r,"ok","وصل تعليقك بنجاح وسيظهر بعد مراجعة المشرف.");f.reset()}else stt(r,"er",esc(j.error||"تعذر إرسال التعليق، حاول مرة أخرى"))}
 function meta(id){const a=DATA.find(x=>String(x.id)===String(id));if(!a)return;document.title=a.title+" | مناسبات صراوة";const d=String(a.body||"").slice(0,150);
  [["description",d],["og:title",a.title],["og:description",d],["og:image",a.img||""]].forEach(([k,v])=>{const at=k==="description"?"name":"property";let m=document.querySelector(`meta[${at}="${k}"]`);if(!m){m=document.createElement("meta");m.setAttribute(at,k);document.head.appendChild(m)}m.content=v});
  let s=document.getElementById("ld");if(!s){s=document.createElement("script");s.id="ld";s.type="application/ld+json";document.head.appendChild(s)}
@@ -339,7 +348,7 @@ let CFG={name:"مناسبات صراوة",fb:FB_URL,wa:WHATSAPP,yt:"",tg:"",bann
 const HB=["hero","main","events","top","picks","more","poll","news","follow"];
 const NAV0=[["home","الرئيسية","#home"],["news","أخبار صراوة","#s-0"],["cal","مناسبات صراوة","#s-2"],["users","شخصيات صراوة","#s-8"],["trophy","مسابقات","#s-32"],["grid","كل الأقسام","#sections"]];
 const soc=big=>[["fb",CFG.fb,"فيسبوك"],["wa",CFG.wa?"https://wa.me/"+String(CFG.wa).replace(/\D/g,""):"","واتساب"],["yt",CFG.yt,"يوتيوب"],["tg",CFG.tg,"تيليجرام"]].filter(x=>/^https:\/\//.test(x[1]||"")).map(([i,u,n])=>big?`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${ic(i)} ${n}</a>`:`<a class="ib" href="${esc(u)}" target="_blank" rel="noopener" aria-label="${n}" title="${n}">${ic(i)}</a>`).join("");
-function pi(){const r=document.documentElement;$("#tb").innerHTML=ic(r.classList.contains("dark")?"sun":"moon");$("#mn").innerHTML=ic("menu");$("#sb").innerHTML=ic("search");$("#up").innerHTML=ic("up");nBadge()}
+function pi(){const r=document.documentElement;$("#tb").innerHTML=ic(r.classList.contains("dark")?"sun":"moon");$("#mn").innerHTML=ic("menu");$("#sb").innerHTML=ic("search");$("#up").innerHTML=ic("up");nBadge();uBtn()}
 function fsz(){const c=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--fs"))||18;fs(c>=26?-8:4)}
 function crumbs(h){const H=["الرئيسية","#home"],T={notifications:"الإشعارات",saved:"المحفوظات",archive:"الأرشيف",submit:"أرسل مشاركتك",search:"بحث",sections:"كل الأقسام"};let c=[];
  if(/^s-\d+$/.test(h)&&SEC[+h.slice(2)])c=[H,[SEC[+h.slice(2)]]];
@@ -359,7 +368,20 @@ function applyCfg(c){CFG={...CFG,...c};
  $("#hn").textContent=CFG.name;$("#hb").textContent=CFG.name;if(img(CFG.banner))$("#bn").src=CFG.banner;$("#tk").hidden=!flag(CFG.ticker);
  foot();
  renderNav()}
-function cmL(id){const c=$("#cl");if(!c||!API_URL)return;fetch(API_URL+"?type=comments&id="+encodeURIComponent(id)).then(r=>r.json()).then(L=>{if(Array.isArray(L))c.innerHTML=L.map(x=>`<div class="cmt"><span class="av">${esc([...String(x.name||"؟")][0])}</span><div class="bub"><b>${esc(x.name)}</b> <small>${tm(x.date)}</small><p style="margin:4px 0 0">${esc(x.text)}</p>${x.reply?`<div class="rep">رد المجلة: ${esc(x.reply)}</div>`:""}</div></div>`).join("")}).catch(()=>{})}
+let CML={};
+const pcG=()=>ls("pc")||{};
+function cmR(aid){const c=$("#cl");if(!c)return;const L=CML[aid]||[],ids=new Set(L.map(x=>x.id)),ok=new Set(L.map(x=>x.name+"|"+x.text)),now=Date.now();
+ const pend=(pcG()[aid]||[]).filter(x=>!ok.has(x.name+"|"+x.text)&&now-new Date(x.date)<6048e5);
+ const one=(x,root,pending)=>`<div class="cmt"><span class="av">${avH(x)}</span><div class="bub"><b>${esc(x.name)}</b> <small>${pending?"بانتظار مراجعة المشرف":tm(x.date)}</small>${x.st&&x.st!=="معتمد"?`<span class="bdg">${x.st==="جديد"?"بانتظار الاعتماد":"مخفي"}</span>`:""}<p style="margin:4px 0 0;white-space:pre-line">${esc(x.text)}</p>${x.reply?`<div class="rep">رد المجلة: ${esc(x.reply)}</div>`:""}${pending?"":`<button class="lk" data-n="${esc(x.name)}" onclick="cfOpen('${esc(aid)}','${esc(root||x.id)}',this.dataset.n)">رد</button>`}${pending?"":cmMod(x,aid)}<div id="mr-${esc(x.id)}"></div></div></div>`,
+ tops=L.filter(x=>!x.parent||!ids.has(x.parent));
+ c.innerHTML=tops.map(x=>one(x,"")+`<div class="kids">${L.filter(k=>k.parent===x.id).map(k=>one(k,x.id)).join("")}<div id="rf-${esc(x.id)}"></div></div>`).join("")+pend.map(x=>one(x,"",1)).join("")}
+function cmL(id){const c=$("#cl");if(!c||!API_URL)return;(can("comList")?adm("comList",{ref:String(id)}):fetch(API_URL+"?type=comments&id="+encodeURIComponent(id)).then(r=>r.json())).then(L=>{if(Array.isArray(L)){CML[id]=L;cmR(id)}}).catch(()=>{})}
+function cfClose(){document.querySelectorAll(".cf").forEach(x=>x.remove())}
+function cfOpen(aid,root,to){cfClose();const t=root?document.getElementById("rf-"+root):$("#cf");if(!t)return;
+ if(!USER&&cReq()){t.innerHTML=`<div class="cf note">سجّل الدخول لكتابة تعليق. <button class="btn g" type="button" onclick="ul()">تسجيل الدخول</button></div>`;return}t.innerHTML=`<form class="cf" onsubmit="cm(event,'${esc(aid)}','${esc(root||"")}')">${USER?`<div class="who"><span class="av">${avH(USER)}</span>${esc(USER.name)}</div>`:`<input class="inp" id="cn" required placeholder="الاسم" value="${esc(ls("cname")||"")}">${hasAuth()?'<button class="lk" type="button" onclick="ul()">أو سجّل الدخول بحسابك</button>':""}`}<textarea class="inp" id="ct" rows="3" required placeholder="${to?"اكتب ردك":"اكتب تعليقك"}"></textarea><div class="bar"><button class="btn g">إرسال</button><button class="btn o" type="button" onclick="cfClose()">إلغاء</button></div></form>`;
+ const x=$("#ct");if(to)x.value="@"+to+" ";(USER||ls("cname")?x:$("#cn")).focus();t.scrollIntoView({behavior:"smooth",block:"center"})}
+async function cm(e,aid,parent){e.preventDefault();const f=e.target,r=$("#cr"),name=USER?USER.name:$("#cn").value.trim(),text=$("#ct").value.trim();busy(f,1);stt(r,"",WAIT);const j=await post({type:"تعليق",ref:aid,name,text,parent:parent||"",token:USER&&USER.token});busy(f,0);
+ if(j.error==="expired"){uOut(1);stt(r,"er","انتهت جلستك، سجّل الدخول من جديد");return}if(j.ok&&j.auto){cfClose();stt(r,"ok","تم نشر تعليقك.");cmL(aid);return}if(j.ok){ls("cname",name);const p=pcG();p[aid]=[...(p[aid]||[]),{name,text,date:new Date().toISOString()}].slice(-30);ls("pc",p);cfClose();stt(r,"ok","وصل تعليقك بنجاح وسيظهر بعد مراجعة المشرف.");cmR(aid)}else stt(r,"er",esc(j.error||"تعذر إرسال التعليق، حاول مرة أخرى"))}
 /* ===== التفاعلات ===== */
 const RX=[["like","👍","أعجبني"],["love","❤️","أحببته"],["haha","😂","أضحكني"],["wow","😮","واو"],["sad","😢","أحزنني"],["angry","😡","أغضبني"]];
 const DID=(()=>{let d=ls("did");if(!d){d="d"+(self.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now()+""+Math.random()).replace(/[^a-z0-9]/gi,"");ls("did",d)}return d})();
@@ -384,7 +406,7 @@ function react(id,k){const m=myrx(id),o=RXC[id]||(RXC[id]={c:{},n:0}),nk=m===k?"
  if(API_URL)post({type:"تفاعل",ref:String(id),contact:DID,text:nk||"none"}).then(j=>{if(j&&j.c){RXC[id]=j;RXALL[id]=rxT(j);rxPaint(id)}})}
 function rxLoad(id){if(!API_URL)return;fetch(API_URL+"?type=rx&id="+encodeURIComponent(id)).then(r=>r.json()).then(j=>{if(j&&j.c){RXC[id]=j;RXALL[id]=rxT(j);rxPaint(id)}}).catch(()=>{})}
 async function rxAll(){if(!API_URL)return;try{const j=await fetch(API_URL+"?type=rxall").then(r=>r.json());if(j&&!j.error&&!Array.isArray(j)){RXALL=j;const a=document.activeElement;if(!/^#a-/.test(location.hash)&&!(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)))rr()}}catch(e){}}
-function cmGo(){const e=$("#cms");e&&e.scrollIntoView({behavior:"smooth"})}
+function cmGo(){const a=curA();if(a)cfOpen(String(a.id));else{const e=$("#cms");e&&e.scrollIntoView({behavior:"smooth"})}}
 /* ===== المشاركة (زر واحد) ===== */
 function curA(){return DATA.find(x=>String(x.id)===location.hash.slice(3))}
 function shr(){const a=curA();if(!a)return;const u=location.href.split("#")[0]+"#a-"+a.id,U=encodeURIComponent(u),T=encodeURIComponent(a.title),B=encodeURIComponent(a.title+"\n"+u);
@@ -467,10 +489,50 @@ function dr(o){const d=$("#dw");if(!d)return;d.classList.toggle("open",!!o);$("#
 function drawer(){const h="#"+(location.hash.slice(1)||"home"),n=nUn(),sv=saved().length,c=x=>x?`<i class="cn">${x.toLocaleString("ar-EG")}</i>`:"",
  ln=(href,t,x)=>`<a class="dl${h===href?" on":""}" href="${href}"><span>${t}</span>${x||""}</a>`;
  $("#dn").textContent=CFG.name;
- $("#dl").innerHTML=ln("#home","الرئيسية")+ln("#notifications","الإشعارات",c(n))+ln("#saved","المحفوظات",c(sv))+ln("#archive","الأرشيف")+ln("#submit","أرسل مشاركتك")+`<div class="dsh">الأقسام</div>`+SEC.map((s,i)=>{const k=by(i).length;return k?ln("#s-"+i,secI(i)+" "+esc(s),c(k)):""}).join("")}
+ $("#dl").innerHTML=ln("#home","الرئيسية")+ln("#notifications","الإشعارات",c(n))+ln("#saved","المحفوظات",c(sv))+ln("#archive","الأرشيف")+ln("#submit","أرسل مشاركتك")+`<button class="dl" style="width:100%;border:0;background:none;cursor:pointer;text-align:start" onclick="dr(0);ua()"><span>${USER?"حسابي: "+esc(USER.name):"تسجيل الدخول"}</span></button>`+(USER&&USER.acts&&USER.acts.length?'<a class="dl" href="admin.html" target="_blank" rel="noopener"><span>لوحة التحكم</span></a>':"")+`<div class="dsh">الأقسام</div>`+SEC.map((s,i)=>{const k=by(i).length;return k?ln("#s-"+i,secI(i)+" "+esc(s),c(k)):""}).join("")}
 /* ===== الفوتر ===== */
 function foot(){const P=(h,x)=>`<a href="#${h}">${esc(PAGES[h]?PAGES[h][0]:x)}</a>`;
  $("#ft").innerHTML=`<div class="wrap fg"><div class="fc fbr"><b>${esc(CFG.name)}</b><p>تشارككم لحظاتكم دائماً. أخبار القرية ومناسباتها وشخصياتها في مكان واحد.</p><div class="soc">${soc(0)}</div></div><div class="fc"><h4>الأقسام</h4>${MAIN.map(i=>`<a href="#s-${i}">${secI(i)} ${SEC[i]}</a>`).join("")}<a href="#archive">الأرشيف</a></div><div class="fc"><h4>عن المجلة</h4>${P("about","من نحن")}${P("editorial","هيئة التحرير")}${P("ads","أعلن معنا")}${P("privacy","سياسة الخصوصية")}</div><div class="fc"><h4>تواصل معنا</h4>${P("contact","تواصل معنا")}<a href="#submit">أرسل مشاركتك</a><a href="#notifications">الإشعارات</a></div></div><div class="wrap fcp">© ${new Date().getFullYear()} ${esc(CFG.name)}. جميع الحقوق محفوظة.</div>`}
+/* ===== الأعضاء وتسجيل الدخول ===== */
+Object.assign(IC,{user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'});
+let USER=ls("sr_u");
+const AU=()=>CFG.auth||{},hasAuth=()=>!!(AU().google||AU().fb),cReq=()=>AU().req==="نعم"&&hasAuth(),can=a=>!!(USER&&USER.acts&&(USER.acts[0]==="*"||USER.acts.includes(a)));
+const RLN={member:"عضو",moderator:"مشرف",editor:"محرر",chief:"رئيس تحرير",owner:"مالك",ads:"مسؤول إعلانات"},lrm=k=>{try{localStorage.removeItem(k)}catch(e){}};
+const avH=x=>{const u=img(x.av||x.avatar);return u?`<img src="${u}" alt="" referrerpolicy="no-referrer" loading="lazy">`:esc([...String(x.name||"؟")][0])};
+function uBtn(){const b=$("#ub");if(!b)return;const u=USER&&img(USER.avatar);b.innerHTML=u?`<img class="uav" src="${u}" alt="" referrerpolicy="no-referrer">`:ic("user")}
+async function adm(a,d){const j=await post({action:a,token:USER&&USER.token,...d});if(j.error==="expired"){uOut(1);tst("انتهت الجلسة، سجّل الدخول من جديد")}return j}
+function setU(j,ad){USER=ad?{token:j.token,name:j.name,role:j.role,acts:j.acts||[],avatar:"",h:"",adm:1}:{token:j.token,...j.me};ls("sr_u",USER);if(USER.acts&&USER.acts.length)ls("sr_tok",USER.token);else lrm("sr_tok");uBtn();shx();tst("أهلاً "+USER.name);rr()}
+function uOut(q){USER=null;lrm("sr_u");lrm("sr_tok");uBtn();shx();if(!q)tst("تم تسجيل الخروج");rr()}
+function uInit(){if(USER&&!USER.adm&&API_URL)post({action:"me",token:USER.token}).then(j=>{if(j.error==="expired")uOut(1);else if(j.me){USER={...USER,...j.me};ls("sr_u",USER);if(USER.acts&&USER.acts.length)ls("sr_tok",USER.token);else lrm("sr_tok");uBtn()}})}
+function sheet(h){shx();const d=document.createElement("div");d.className="sh";d.innerHTML=`<div class="shc" role="dialog">${h}</div>`;d.onclick=e=>{if(e.target===d)shx()};document.body.appendChild(d)}
+function ua(){USER?uAcc():ul()}
+function uAcc(){sheet(`<div class="shh"><b>حسابي</b><button class="ib" onclick="shx()" aria-label="إغلاق">✕</button></div><div class="who" style="margin-top:12px"><span class="av">${avH(USER)}</span><span>${esc(USER.name)}<br><small class="mu">${RLN[USER.role]||""}</small></span></div>${USER.acts&&USER.acts.length?'<a class="ob" href="admin.html" target="_blank" rel="noopener">لوحة التحكم</a>':""}<button class="ob" onclick="uOut()">تسجيل الخروج</button>`)}
+function ul(){const A=AU();sheet(`<div class="shh"><b>تسجيل الدخول</b><button class="ib" onclick="shx()" aria-label="إغلاق">✕</button></div>${hasAuth()?`<p class="shp" style="-webkit-line-clamp:unset">سجّل بحسابك لتعلّق باسمك وصورتك.</p>${A.google?'<div id="gb"></div>':""}${A.fb?`<button class="ob fb" onclick="fbGo()">${ic("fb")} المتابعة بفيسبوك</button>`:""}`:'<div class="note">تسجيل دخول الأعضاء غير مفعّل بعد.</div>'}<div id="ur"></div><details style="margin-top:8px"><summary class="mu" style="cursor:pointer;font-size:13px">دخول فريق الإدارة</summary><form onsubmit="uAdm(event)"><input class="inp" id="au" dir="ltr" autocapitalize="off" placeholder="اسم المستخدم"><input class="inp" id="ap" type="password" placeholder="كلمة السر"><button class="btn g">دخول</button></form></details><p class="mu" style="font-size:12px;margin:8px 0 0">بالدخول توافق على حفظ اسمك وبريدك وصورتك من الحساب لعرضها مع تعليقاتك. <a href="#privacy" onclick="shx()" style="text-decoration:underline">سياسة الخصوصية</a></p>`);if(A.google)gInit();if(A.fb)fbLoad()}
+const SCR={},lsc=u=>SCR[u]||(SCR[u]=new Promise((ok,no)=>{const e=document.createElement("script");e.src=u;e.async=1;e.onload=ok;e.onerror=()=>{delete SCR[u];no()};document.head.appendChild(e)}));
+let GOK=0,FBOK=0;
+async function gInit(){try{await lsc("https://accounts.google.com/gsi/client");if(!GOK){google.accounts.id.initialize({client_id:AU().google,callback:r=>uAuth({action:"authGoogle",cred:r.credential})});GOK=1}const e=$("#gb");if(e)google.accounts.id.renderButton(e,{theme:"outline",size:"large",shape:"pill",text:"continue_with",locale:"ar",width:Math.min(300,innerWidth-80)})}catch(x){const r=$("#ur");r&&stt(r,"er","تعذر تحميل تسجيل دخول جوجل، تحقق من الإنترنت")}}
+async function fbLoad(){try{await lsc("https://connect.facebook.net/ar_AR/sdk.js");if(!FBOK){FB.init({appId:AU().fb,cookie:false,xfbml:false,version:"v25.0"});FBOK=1}}catch(x){}}
+function fbGo(){if(!FBOK||!window.FB){tst("جارٍ تحميل فيسبوك، حاول بعد لحظة");fbLoad();return}FB.login(r=>{if(r.authResponse)uAuth({action:"authFb",token:r.authResponse.accessToken});else tst("تم إلغاء الدخول")},{scope:"public_profile,email"})}
+async function uAuth(p){const r=$("#ur");r&&stt(r,"",WAIT);const j=await post(p);if(j.token)setU(j);else{const m=j.error||"تعذر تسجيل الدخول";r?stt(r,"er",esc(m)):tst(m)}}
+async function uAdm(e){e.preventDefault();const r=$("#ur");stt(r,"",WAIT);const j=await post({action:"login",user:$("#au").value.trim(),pass:$("#ap").value});j.token?setU(j,1):stt(r,"er",esc(j.error||"تعذر الدخول"))}
+/* ===== أدوات الإدارة داخل المجلة ===== */
+function admBar(a){if(!USER)return"";const i=esc(a.id),b=[];
+ if(can("getAll")&&can("delArticle"))b.push(`<a class="btn o" href="admin.html#e-${i}" target="_blank" rel="noopener">تعديل المقال</a>`);
+ if(can("delArticle"))b.push(`<button class="btn o" onclick="artAct('unpub','${i}')">إلغاء النشر</button><button class="btn o" onclick="artAct('brk','${i}')">${flag(a.breaking)?"إزالة العاجل":"تعيين كعاجل"}</button><button class="btn o" onclick="artAct('pick','${i}')">${flag(a.pick)?"إزالة التمييز":"اختيار المحرر"}</button><button class="btn r" onclick="artAct('del','${i}')">حذف</button>`);
+ return b.length?`<div class="admb"><b>أدوات الإدارة</b>${b.join("")}</div>`:""}
+async function artAct(k,id){const a=DATA.find(x=>String(x.id)===String(id));if(!a)return;
+ if(k==="del"&&!confirm("حذف المقال نهائياً؟"))return;if(k==="unpub"&&!confirm("إلغاء نشر المقال؟ سيتحول إلى مسودة."))return;
+ const j=k==="del"?await adm("delArticle",{id}):await adm("saveArticle",{a:k==="unpub"?{id,status:"مسودة"}:k==="brk"?{id,breaking:flag(a.breaking)?"":1}:{id,pick:flag(a.pick)?"":1}});
+ if(j.error){tst(j.error);return}tst("تم");if(k==="del"||k==="unpub")location.hash="home";SIG="";KEEP=1;await sync();KEEP=0}
+function cmMod(x,aid){const st=can("comSet"),b=[],i=esc(x.id),a=esc(aid),mine=USER&&x.u&&x.u===USER.h;
+ if(st&&x.st&&x.st!=="معتمد")b.push(`<button class="lk" onclick="cmAct('comSet','${i}','${a}','معتمد')">اعتماد</button>`);
+ if(st&&x.st==="معتمد")b.push(`<button class="lk" onclick="cmAct('comSet','${i}','${a}','مرفوض')">إخفاء</button>`);
+ if(can("comReply"))b.push(`<button class="lk" onclick="cmRep('${i}','${a}')">رد المجلة</button>`);
+ if(can("comDel"))b.push(`<button class="lk r" onclick="cmAct('comDel','${i}','${a}')">حذف</button>`);else if(mine)b.push(`<button class="lk r" onclick="cmAct('delMine','${i}','${a}')">حذف تعليقي</button>`);
+ return b.length?`<div class="mod">${b.join("")}</div>`:""}
+async function cmAct(k,id,aid,st){if(k!=="comSet"&&!confirm("حذف التعليق نهائياً؟"))return;const j=await adm(k,{id,status:st});if(j.error){tst(j.error);return}tst("تم");cmL(aid)}
+function cmRep(id,aid){const t=document.getElementById("mr-"+id),x=(CML[aid]||[]).find(c=>c.id===id);if(!t)return;t.innerHTML=`<form class="cf" onsubmit="cmRepS(event,'${esc(id)}','${esc(aid)}')"><textarea class="inp" id="rt" rows="2" placeholder="رد المجلة على التعليق"></textarea><div class="bar"><button class="btn g">حفظ الرد</button><button class="btn o" type="button" onclick="this.closest('.cf').remove()">إلغاء</button></div></form>`;$("#rt").value=x&&x.reply||"";$("#rt").focus()}
+async function cmRepS(e,id,aid){e.preventDefault();const f=e.target;busy(f,1);const j=await adm("comReply",{id,text:$("#rt").value});busy(f,0);if(j.ok){tst("تم حفظ الرد");cmL(aid)}else tst(j.error||"تعذر الحفظ")}
 /* ===== العمل دون اتصال ===== */
 let OFF=!navigator.onLine;
 function offUI(){const b=$("#off");if(!b)return;b.hidden=!OFF;if(OFF){const t=ls("ct");b.textContent="أنت غير متصل بالإنترنت. تُعرض آخر نسخة محفوظة من المجلة"+(t?" (آخر تحديث: "+ago(t)+")":"")+"."}}
@@ -490,7 +552,7 @@ async function sync(){
 async function refresh(){if(!API_URL||document.hidden||location.hash==="#submit")return;const a=document.activeElement;if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;
  try{const j=await fetch(API_URL+"?type=ver").then(r=>r.json());if(j.v&&j.v!==SIG){KEEP=1;await sync();KEEP=0}}catch(e){KEEP=0}}
 addEventListener("hashchange",()=>{dr(0);route()});
-pi();{const c=ls("cache");if(c&&c.length){DATA=c;LOADED=1}}applyCfg(ls("cfg")||{});sync();rxAll();nInit();offUI();if(OFF)setTimeout(()=>tst("لا يوجد اتصال، يتم عرض آخر محتوى محفوظ",4500),700);
+pi();uInit();{const c=ls("cache");if(c&&c.length){DATA=c;LOADED=1}}applyCfg(ls("cfg")||{});sync();rxAll();nInit();offUI();if(OFF)setTimeout(()=>tst("لا يوجد اتصال، يتم عرض آخر محتوى محفوظ",4500),700);
 setInterval(refresh,60000);addEventListener("online",refresh);document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()});
 /* ===== PWA: التثبيت وملف الخدمة ===== */
 let dp;const ib=()=>$("#inst"),isApp=()=>matchMedia("(display-mode:standalone)").matches||navigator.standalone;
